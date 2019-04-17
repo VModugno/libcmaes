@@ -1,5 +1,6 @@
 
 set (LIBCMAES_SOURCES
+1plus1cmastrategy.cc
 acovarianceupdate.cc
 cmaparameters.cc
 cmastopcriteria.cc
@@ -14,7 +15,7 @@ errstats.cc
 ipopcmastrategy.cc
 surrogatestrategy.cc)
 
-set (LIBCMAES_HEADERS cmaes.h opti_err.h eo_matrix.h cmastrategy.h esoptimizer.h esostrategy.h cmasolutions.h parameters.h cmaparameters.h cmastopcriteria.h ipopcmastrategy.h bipopcmastrategy.h covarianceupdate.h acovarianceupdate.h vdcmaupdate.h pwq_bound_strategy.h eigenmvn.h candidate.h genopheno.h noboundstrategy.h scaling.h llogging.h errstats.h pli.h contour.h)
+set (LIBCMAES_HEADERS cmaes.h opti_err.h eo_matrix.h cmastrategy.h esoptimizer.h esostrategy.h cmasolutions.h parameters.h cmaparameters.h cmastopcriteria.h ipopcmastrategy.h bipopcmastrategy.h 1plus1cmastrategy.h covarianceupdate.h acovarianceupdate.h vdcmaupdate.h pwq_bound_strategy.h eigenmvn.h candidate.h genopheno.h noboundstrategy.h scaling.h llogging.h errstats.h pli.h contour.h)
 
 if (ENABLE_SURROG)
   list (APPEND LIBCMAES_SOURCES surrogatestrategy.cc)
