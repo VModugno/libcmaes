@@ -48,6 +48,7 @@ namespace libcmaes
     template <class U, class V> friend class IPOPCMAStrategy;
     template <class U, class V> friend class BIPOPCMAStrategy;
     friend class CovarianceUpdate;
+    friend class ConstrainedCovarianceUpdate;
     friend class ACovarianceUpdate;
     template <class U> friend class errstats;
 #ifdef HAVE_SURROG
@@ -485,6 +486,7 @@ namespace libcmaes
 			const TGenoPheno &gp=TGenoPheno()) const;
 
   private:
+
     dMat _cov; /**< covariance matrix. */
     dMat _csqinv; /** inverse root square of covariance matrix. */
     dMat _sepcov;
@@ -498,6 +500,15 @@ namespace libcmaes
     std::vector<Candidate> _best_candidates_hist; /**< history of best candidate solutions. */
     int _max_hist = -1; /**< max size of the history, keeps memory requirements fixed. */
     
+    // added variables for (1+1)cmaes with constraints
+	dMat _A;                                      /** cholesky factor of covariance matrix */
+	bool _violated_constrained;                   /** it is true if at least one constraints has been violated */
+	std::vector<int> _vci;                        /** vector of index violated during the current rollout */
+	std::vector<double> _constraints_violations;  /** vector of the constraints violation for the current rollout */
+	dMat _vc;                                     /** (n_constr x _dim) matrix used for the constrained update of the covariance matrix  in case of constraints violations*/
+	dVec _z;                                      /** sample from multivariate normal gaussian */
+	//
+
     double _max_eigenv = 0.0; /**< max eigenvalue, for termination criteria. */
     double _min_eigenv = 0.0; /**< min eigenvalue, for termination criteria. */
     dVec _leigenvalues; /**< last computed eigenvalues, for termination criteria. */

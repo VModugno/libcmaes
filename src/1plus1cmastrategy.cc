@@ -372,16 +372,9 @@ namespace libcmaes
     eostrat<TGenoPheno>::_pffunc(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions,*_fplotstream);
   }
 
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<NoBoundStrategy>>;
-  template class OnePlusOneCMAStrategy<ACovarianceUpdate,GenoPheno<NoBoundStrategy>>;
-  template class OnePlusOneCMAStrategy<VDCMAUpdate,GenoPheno<NoBoundStrategy>>;
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<pwqBoundStrategy>>;
-  template class OnePlusOneCMAStrategy<ACovarianceUpdate,GenoPheno<pwqBoundStrategy>>;
-  template class OnePlusOneCMAStrategy<VDCMAUpdate,GenoPheno<pwqBoundStrategy>>;
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy>>;
-  template class OnePlusOneCMAStrategy<ACovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy>>;
-  template class OnePlusOneCMAStrategy<VDCMAUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy>>;
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy>>;
-  template class OnePlusOneCMAStrategy<ACovarianceUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy>>;
-  template class OnePlusOneCMAStrategy<VDCMAUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy>>;
+  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<NoBoundStrategy> >;
+  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<pwqBoundStrategy> >;
+  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy> >;
+  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy> >;
+
 }

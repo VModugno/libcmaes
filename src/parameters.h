@@ -48,6 +48,7 @@ namespace libcmaes
       template <class U, class V> friend class IPOPCMAStrategy;
       template <class U, class V> friend class BIPOPCMAStrategy;
       friend class CovarianceUpdate;
+      friend class ConstrainedCovarianceUpdate;
       friend class ACovarianceUpdate;
       template <class U> friend class errstats;
       friend class VDCMAUpdate;
@@ -556,6 +557,8 @@ namespace libcmaes
       
     protected:
       int _dim; /**< function space dimensions. */
+      // added for constraints
+      int _Nconstr; /** number of black box constraints */
       int _lambda = -1; /**< number of offsprings. */
       int _max_iter = -1; /**< max iterations. */
       int _max_fevals = -1; /**< max budget as number of function evaluations. */

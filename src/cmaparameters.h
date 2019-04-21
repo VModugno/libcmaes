@@ -43,6 +43,7 @@ namespace libcmaes
       template <class U, class V> friend class IPOPCMAStrategy;
       template <class U, class V> friend class BIPOPCMAStrategy;
       friend class CovarianceUpdate;
+      friend class ConstrainedCovarianceUpdate;
       friend class ACovarianceUpdate;
       template <class U> friend class errstats;
       friend class VDCMAUpdate;
@@ -288,13 +289,27 @@ namespace libcmaes
       void set_tpa_dsigma(const double &d) { _dsigma = d; }
       
     private:
-      int _mu; /**< number of candidate solutions used to update the distribution parameters. */
-      dVec _weights; /**< offsprings weighting scheme. */
+
+      // set of parameters required by the (1+1)CMA-ES constrained update
+      double _d;
+      double _c;
+      double _c_p;
+      double _P_succ;
+      double _P_target;
+      double _c_cov_plus;
+      double _c_cov_minus;
+      double _c_c;
+      double _beta;
+      bool   _constraints_on;
+
+
+      int _mu;        /**< number of candidate solutions used to update the distribution parameters. */
+      dVec _weights;  /**< offsprings weighting scheme. */
       double _csigma; /**< cumulation constant for step size. */
-      double _c1; /**< covariance matrix learning rate for the rank one update using pc. */
-      double _cmu; /**< covariance matrix learning reate for the rank mu update. */
-      double _cc; /**< cumulation constant for pc. */
-      double _muw; /**< \sum^\mu _weights .*/
+      double _c1;     /**< covariance matrix learning rate for the rank one update using pc. */
+      double _cmu;    /**< covariance matrix learning rate for the rank mu update. */
+      double _cc;     /**< cumulation constant for pc. */
+      double _muw;    /**< \sum^\mu _weights .*/
       double _dsigma; /**< step size damping factor. */
       
       // computed once at init for speeding up operations.
