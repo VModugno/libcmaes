@@ -559,6 +559,9 @@ namespace libcmaes
       int _dim; /**< function space dimensions. */
       // added for constraints
       int _Nconstr; /** number of black box constraints */
+      bool   _constraints_on;  /** if the problem is constrained or not */
+      //
+
       int _lambda = -1; /**< number of offsprings. */
       int _max_iter = -1; /**< max iterations. */
       int _max_fevals = -1; /**< max budget as number of function evaluations. */

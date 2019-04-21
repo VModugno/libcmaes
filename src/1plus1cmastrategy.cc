@@ -316,50 +316,44 @@ namespace libcmaes
     //DLOG(INFO) << "optimize()\n";
     //debug
 
-    if (eostrat<TGenoPheno>::_initial_elitist
-	|| eostrat<TGenoPheno>::_parameters._initial_elitist
-	|| eostrat<TGenoPheno>::_parameters._elitist
-	|| eostrat<TGenoPheno>::_parameters._initial_fvalue)
-      {
-	eostrat<TGenoPheno>::_solutions._initial_candidate = Candidate(eostrat<TGenoPheno>::_func(eostrat<TGenoPheno>::_parameters._gp.pheno(eostrat<TGenoPheno>::_solutions._xmean).data(),eostrat<TGenoPheno>::_parameters._dim),
-								       eostrat<TGenoPheno>::_solutions._xmean);
-	eostrat<TGenoPheno>::_solutions._best_seen_candidate = eostrat<TGenoPheno>::_solutions._initial_candidate;
-	this->update_fevals(1);
-      }
+    if (eostrat<TGenoPheno>::_initial_elitist || eostrat<TGenoPheno>::_parameters._initial_elitist || eostrat<TGenoPheno>::_parameters._elitist || eostrat<TGenoPheno>::_parameters._initial_fvalue)
+    {
+		eostrat<TGenoPheno>::_solutions._initial_candidate = Candidate(eostrat<TGenoPheno>::_func(eostrat<TGenoPheno>::_parameters._gp.pheno(eostrat<TGenoPheno>::_solutions._xmean).data(),eostrat<TGenoPheno>::_parameters._dim),
+																	   eostrat<TGenoPheno>::_solutions._xmean);
+		eostrat<TGenoPheno>::_solutions._best_seen_candidate = eostrat<TGenoPheno>::_solutions._initial_candidate;
+		this->update_fevals(1);
+    }
 
     std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
     while(!stop())
-      {
-	dMat candidates = askf();
-	evalf(candidates,eostrat<TGenoPheno>::_parameters._gp.pheno(candidates));
-	tellf();
-	eostrat<TGenoPheno>::inc_iter();
-	std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
-	eostrat<TGenoPheno>::_solutions._elapsed_last_iter = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
-	tstart = std::chrono::system_clock::now();
-      }
+    {
+		dMat candidates = askf();
+		evalf(candidates,eostrat<TGenoPheno>::_parameters._gp.pheno(candidates));
+		tellf();
+		eostrat<TGenoPheno>::inc_iter();
+		std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
+		eostrat<TGenoPheno>::_solutions._elapsed_last_iter = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
+		tstart = std::chrono::system_clock::now();
+    }
     if (eostrat<TGenoPheno>::_parameters._with_edm)
       eostrat<TGenoPheno>::edm();
 
     // test on final value wrt. to best candidate value and number of iterations in between.
     if (eostrat<TGenoPheno>::_parameters._initial_elitist_on_restart)
-      {
-	if (eostrat<TGenoPheno>::_parameters._initial_elitist_on_restart
-	    && eostrat<TGenoPheno>::_solutions._best_seen_candidate.get_fvalue()
-	    < eostrat<TGenoPheno>::_solutions.best_candidate().get_fvalue()
-	    && eostrat<TGenoPheno>::_niter - eostrat<TGenoPheno>::_solutions._best_seen_iter >= 3) // elitist
-	  {
-	    LOG_IF(INFO,!eostrat<TGenoPheno>::_parameters._quiet) << "Starting elitist on restart: bfvalue=" << eostrat<TGenoPheno>::_solutions._best_seen_candidate.get_fvalue() << " / biter=" << eostrat<TGenoPheno>::_solutions._best_seen_iter << std::endl;
-	    this->set_initial_elitist(true);
+    {
+		if (eostrat<TGenoPheno>::_parameters._initial_elitist_on_restart && eostrat<TGenoPheno>::_solutions._best_seen_candidate.get_fvalue()< eostrat<TGenoPheno>::_solutions.best_candidate().get_fvalue() && eostrat<TGenoPheno>::_niter - eostrat<TGenoPheno>::_solutions._best_seen_iter >= 3) // elitist
+		{
+			LOG_IF(INFO,!eostrat<TGenoPheno>::_parameters._quiet) << "Starting elitist on restart: bfvalue=" << eostrat<TGenoPheno>::_solutions._best_seen_candidate.get_fvalue() << " / biter=" << eostrat<TGenoPheno>::_solutions._best_seen_iter << std::endl;
+			this->set_initial_elitist(true);
 
-	    // reinit solution and re-optimize.
-	    eostrat<TGenoPheno>::_parameters.set_x0(eostrat<TGenoPheno>::_solutions._best_seen_candidate.get_x_dvec_ref());
-	    eostrat<TGenoPheno>::_solutions = CMASolutions(eostrat<TGenoPheno>::_parameters);
-	    eostrat<TGenoPheno>::_solutions._nevals = eostrat<TGenoPheno>::_nevals;
-	    eostrat<TGenoPheno>::_niter = 0;
-	    optimize();
-	  }
-      }
+			// reinit solution and re-optimize.
+			eostrat<TGenoPheno>::_parameters.set_x0(eostrat<TGenoPheno>::_solutions._best_seen_candidate.get_x_dvec_ref());
+			eostrat<TGenoPheno>::_solutions = CMASolutions(eostrat<TGenoPheno>::_parameters);
+			eostrat<TGenoPheno>::_solutions._nevals = eostrat<TGenoPheno>::_nevals;
+			eostrat<TGenoPheno>::_niter = 0;
+			optimize();
+		}
+    }
 
     if (eostrat<TGenoPheno>::_solutions._run_status >= 0)
       return OPTI_SUCCESS;

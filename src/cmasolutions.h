@@ -503,10 +503,12 @@ namespace libcmaes
     // added variables for (1+1)cmaes with constraints
 	dMat _A;                                      /** cholesky factor of covariance matrix */
 	bool _violated_constrained;                   /** it is true if at least one constraints has been violated */
-	std::vector<int> _vci;                        /** vector of index violated during the current rollout */
+	std::vector<int> _vci;                        /** vector of index of violated constraints during current rollout */
 	std::vector<double> _constraints_violations;  /** vector of the constraints violation for the current rollout */
 	dMat _vc;                                     /** (n_constr x _dim) matrix used for the constrained update of the covariance matrix  in case of constraints violations*/
+	double _Psucc;                                /** it could be substituted with _psigma but in our case is single dimension so we keep ours */
 	dVec _z;                                      /** sample from multivariate normal gaussian */
+	std::vector<double> _performances;            /** list of best performances*/
 	//
 
     double _max_eigenv = 0.0; /**< max eigenvalue, for termination criteria. */

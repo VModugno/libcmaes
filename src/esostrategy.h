@@ -218,17 +218,17 @@ namespace libcmaes
 		void perform_uh(const dMat& candidates, const dMat& phenocandidates, int& nfcalls);
 
 		/**
-		 * \brief part of the ucertainty handling scheme that select which candidates should be reevaluated.
+		 * \brief part of the uncertainty handling scheme that select which candidates should be reevaluated.
 		 */
 		void select_candidates_uh(const dMat& candidates, const dMat& phenocandidates, dMat& candidates_uh);
 
 		/**
-		 * \brief part of the ucertainty handling scheme that evaluate the candidates to be reevaluated.
+		 * \brief part of the uncertainty handling scheme that evaluate the candidates to be reevaluated.
 		 */
 		void eval_candidates_uh(const dMat& candidates, const dMat& candidates_uh, std::vector<RankedCandidate>& nvcandidates, int& nfcalls);
 
 		/**
-		 * \brief part of the ucertainty handling scheme that set the results of evaluation to the solutions.
+		 * \brief part of the uncertainty handling scheme that set the results of evaluation to the solutions.
 		 */
 		void set_candidates_uh(const std::vector<RankedCandidate>& nvcandidates);
 
@@ -245,10 +245,12 @@ namespace libcmaes
     void set_initial_elitist(const bool &e) { _initial_elitist = e; }
     
   protected:
+    // todo here we need to add the constraints functions
+
     FitFunc _func; /**< the objective function. */
     int _nevals;  /**< number of function evaluations. */
     int _niter;  /**< number of iterations. */
-    TSolutions _solutions; /**< holder of the current set of solutions and the dynamic elemenst of the search state in general. */
+    TSolutions _solutions; /**< holder of the current set of solutions and the dynamic elements of the search state in general. */
     TParameters _parameters; /**< the optimizer's set of static parameters, from inputs or internal. */
     ProgressFunc<TParameters,TSolutions> _pfunc; /**< possibly custom progress function. */
     GradFunc _gfunc = nullptr; /**< gradient function, when available. */

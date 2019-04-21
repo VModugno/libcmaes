@@ -291,17 +291,18 @@ namespace libcmaes
     private:
 
       // set of parameters required by the (1+1)CMA-ES constrained update
+      // s Successful trace
+      //double _c;     // i can substitute this with double _cc     (it is used for s the successful trace)
+      // sigma (learning rate)
+      //double _c_p;   // i can substitute this with double _csigma (the same role)
       double _d;
-      double _c;
-      double _c_p;
-      double _P_succ;
       double _P_target;
-      double _c_cov_plus;
-      double _c_cov_minus;
-      double _c_c;
+      // covariance
+      //double _c_cov_plus;     // i can substitute this with double _c1 (exactly the same parameters in terms of role inside the algorithm)
+      double _c_cov_minus;    // it cannnot be substituted because in AcovarianceUpdate depend upon _alphaminusmin and it is derived from this and continuosly updated
+      // constrained covariance
+      double _c_constr;
       double _beta;
-      bool   _constraints_on;
-
 
       int _mu;        /**< number of candidate solutions used to update the distribution parameters. */
       dVec _weights;  /**< offsprings weighting scheme. */
