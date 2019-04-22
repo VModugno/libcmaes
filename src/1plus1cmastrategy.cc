@@ -97,8 +97,7 @@ namespace libcmaes
   }
 
   template <class TCovarianceUpdate, class TGenoPheno>
-  OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::OnePlusOneCMAStrategy(FitFunc &func,
-							 CMAParameters<TGenoPheno> &parameters)
+  OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::OnePlusOneCMAStrategy(FitFunc &func,CMAParameters<TGenoPheno> &parameters)
     :ESOStrategy<CMAParameters<TGenoPheno>,CMASolutions,CMAStopCriteria<TGenoPheno> >(func,parameters)
   {
     eostrat<TGenoPheno>::_pfunc = _defaultPFunc;
@@ -108,16 +107,16 @@ namespace libcmaes
     _esolver = Eigen::EigenMultivariateNormal<double>(false,eostrat<TGenoPheno>::_parameters._seed); // seeding the multivariate normal generator.
     LOG_IF(INFO,!eostrat<TGenoPheno>::_parameters._quiet) << "CMA-ES / dim=" << eostrat<TGenoPheno>::_parameters._dim << " / lambda=" << eostrat<TGenoPheno>::_parameters._lambda << " / sigma0=" << eostrat<TGenoPheno>::_solutions._sigma << " / mu=" << eostrat<TGenoPheno>::_parameters._mu << " / mueff=" << eostrat<TGenoPheno>::_parameters._muw << " / c1=" << eostrat<TGenoPheno>::_parameters._c1 << " / cmu=" << eostrat<TGenoPheno>::_parameters._cmu << " / tpa=" << (eostrat<TGenoPheno>::_parameters._tpa==2) << " / threads=" << Eigen::nbThreads() << std::endl;
     if (!eostrat<TGenoPheno>::_parameters._fplot.empty())
-      {
-	_fplotstream = new std::ofstream(eostrat<TGenoPheno>::_parameters._fplot);
-	_fplotstream->precision(std::numeric_limits<double>::digits10);
-      }
+    {
+		_fplotstream = new std::ofstream(eostrat<TGenoPheno>::_parameters._fplot);
+		_fplotstream->precision(std::numeric_limits<double>::digits10);
+    }
     auto mit=eostrat<TGenoPheno>::_parameters._stoppingcrit.begin();
     while(mit!=eostrat<TGenoPheno>::_parameters._stoppingcrit.end())
-      {
-	_stopcriteria.set_criteria_active((*mit).first,(*mit).second);
-	++mit;
-      }
+    {
+		_stopcriteria.set_criteria_active((*mit).first,(*mit).second);
+		++mit;
+    }
   }
 
   template <class TCovarianceUpdate, class TGenoPheno>
@@ -264,7 +263,7 @@ namespace libcmaes
   		std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
   	#endif
       // one candidate per row.
-      #pragma omp parallel for if (eostrat<TGenoPheno>::_parameters._mt_feval)
+      //#pragma omp parallel for if (eostrat<TGenoPheno>::_parameters._mt_feval)
       for (int r=0;r<candidates.cols();r++)
       {
     	  eostrat<TGenoPheno>::_solutions._candidates.at(r).set_x(candidates.col(r));

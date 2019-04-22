@@ -56,8 +56,7 @@ namespace libcmaes
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
        */
-	  OnePlusOneCMAStrategy(FitFunc &func,
-		  CMAParameters<TGenoPheno> &parameters);
+	  OnePlusOneCMAStrategy(FitFunc &func,CMAParameters<TGenoPheno> &parameters);
 
       /**
        * \brief constructor for starting from an existing solution.
@@ -66,8 +65,8 @@ namespace libcmaes
        * @param cmasols solution object to start from
        */
 	  OnePlusOneCMAStrategy(FitFunc &func,
-		               CMAParameters<TGenoPheno> &parameters,
-		               const CMASolutions &cmasols);
+		                    CMAParameters<TGenoPheno> &parameters,
+		                    const CMASolutions &cmasols);
 
       ~OnePlusOneCMAStrategy();
 
@@ -84,7 +83,7 @@ namespace libcmaes
 	 * return nothing.
 	 */
       void eval(const dMat &candidates,
-    	      const dMat &phenocandidates=dMat(0,0));
+    	        const dMat &phenocandidates=dMat(0,0));
 
       /**
        * \brief Updates the covariance matrix and prepares for the next iteration.

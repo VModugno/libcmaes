@@ -292,13 +292,13 @@ namespace libcmaes
 
       // set of parameters required by the (1+1)CMA-ES constrained update
       // s Successful trace
-      //double _c;     // i can substitute this with double _cc     (it is used for s the successful trace)
+      double _cs;     // i can substitute this with double _cc     (it is used for s the successful trace)
       // sigma (learning rate)
-      //double _c_p;   // i can substitute this with double _csigma (the same role)
+      double _c_p;   // i can substitute this with double _csigma (the same role)
       double _d;
       double _P_target;
       // covariance
-      //double _c_cov_plus;     // i can substitute this with double _c1 (exactly the same parameters in terms of role inside the algorithm)
+      double _c_cov_plus;     // i can substitute this with double _c1 (exactly the same parameters in terms of role inside the algorithm)
       double _c_cov_minus;    // it cannnot be substituted because in AcovarianceUpdate depend upon _alphaminusmin and it is derived from this and continuosly updated
       // constrained covariance
       double _c_constr;

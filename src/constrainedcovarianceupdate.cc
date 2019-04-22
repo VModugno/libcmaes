@@ -62,9 +62,9 @@ namespace libcmaes
 	else{  // all the constraints are satisfied
 
 		if(solutions._candidates[0].get_fvalue() > solutions._performances.back())
-			solutions._Psucc = (1- parameters._csigma)*solutions._Psucc + parameters._csigma;
+			solutions._Psucc = (1- parameters._c_p)*solutions._Psucc + parameters._c_p;
 		else
-			solutions._Psucc = (1-parameters._csigma)*solutions._Psucc;
+			solutions._Psucc = (1-parameters._c_p)*solutions._Psucc;
 		// update sigma, sigma(k+1) = sigma(k)*exp( (1/d) * (P_succ - P_target) / (1-P_target) );
 		solutions._sigma = solutions._sigma*std::exp( (1/parameters._d) * (solutions._Psucc - parameters._P_target) / (1-parameters._P_target) );
 
@@ -76,11 +76,11 @@ namespace libcmaes
 			// update performance with the new best
 			solutions._performances.push_back(solutions._candidates[0].get_fvalue());
 			// update exponentially fading record s = _pc  s(k+1,:) = (1-c)*s(k,:) + sqrt(c*(2-c))*(A{k}*z')';
-		    solutions._pc = (1 - parameters._cc)*solutions._pc + sqrt(parameters._cc*(2-parameters._cc))*(solutions._A*solutions._z);
+		    solutions._pc = (1 - parameters._cs)*solutions._pc + sqrt(parameters._cs*(2-parameters._cs))*(solutions._A*solutions._z);
 			// w = (A{k}^(-1)*s(k+1,:)')';
 			w = solutions._A.inverse()*solutions._pc;
 			// update A, A{k+1} = sqrt(1 - c_cov_plus)*A{k} + ( sqrt(1-c_cov_plus)/norm(w)^2 )*(sqrt(1 + (c_cov_plus*norm(w)^2)/(1-c_cov_plus) ) - 1 )*s(k+1,:)'*w
-			solutions._A = sqrt(1 - parameters._c1)*solutions._A + ( sqrt(1-parameters._c1)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c1) ) - 1 )* (solutions._pc.transpose()*w);
+			solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
 
 		 }
 		 else{ // performance is worse
