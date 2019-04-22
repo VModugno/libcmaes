@@ -30,7 +30,6 @@ namespace libcmaes
 				                           Eigen::EigenMultivariateNormal<double> &esolver,
 				                           CMASolutions &solutions)
   {
-
 	// some constraints are violated and constraints evaluation is active
 	if(solutions._violated_constrained && parameters._constraints_on){
 		 //no update mean

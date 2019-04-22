@@ -78,6 +78,14 @@ namespace libcmaes
        */
       dMat ask();
 
+
+      /**
+	 * \brief overwrite of the eval function to deal with constraints
+	 * return nothing.
+	 */
+      void eval(const dMat &candidates,
+    	      const dMat &phenocandidates=dMat(0,0));
+
       /**
        * \brief Updates the covariance matrix and prepares for the next iteration.
        */
