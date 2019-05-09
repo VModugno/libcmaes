@@ -22,6 +22,7 @@
 #include "esoptimizer.h"
 #include "cmastrategy.h"
 #include "llogging.h"
+#include "1plus1cmastrategy.h"
 
 using namespace libcmaes;
 
@@ -49,7 +50,12 @@ int main(int argc, char *argv[])
   int lambda = 10;
   CMAParameters<> cmaparams(x0,sigma,lambda);
   ESOptimizer<CMAStrategy<CovarianceUpdate>,CMAParameters<>> cmaes(cigtab,cmaparams);
+  ESOptimizer<OnePlusOneCMAStrategy<CovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(cigtab,cmaparams);
   cmaes.optimize();
+  // seg fault below
+  // onePlusOneCmaes.optimize();
   double edm = cmaes.edm();
-  std::cerr << "EDM=" << edm << " / EDM/fm=" << edm / cmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
+  // double edm1 = onePlusOneCmaes.edm();
+  std::cerr << "EDM " << edm << " / EDM/fm=" << edm / cmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
+  // std::cerr << "EDM " << edm1 << " / EDM/fm=" << edm1 / onePlusOneCmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
 }
