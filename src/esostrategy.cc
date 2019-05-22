@@ -60,6 +60,27 @@ namespace libcmaes
   }
 
   template<class TParameters,class TSolutions,class TStopCriteria>
+  ESOStrategy<TParameters,TSolutions,TStopCriteria>::ESOStrategy(ConstrFitFunc &func,
+                                                                 TParameters &parameters)
+    :_cfunc(func),_nevals(0),_niter(0),_parameters(parameters)
+  {
+    if (parameters._maximize)
+    {
+        _constrfuncaux = _cfunc;
+        _cfunc = [&](const double *x, const int N, std::vector<double> & violations) { return -1.0*_constrfuncaux(x,N,violations); };
+    }
+    _pfunc = [](const TParameters&,const TSolutions&){return 0;}; // high level progress function does do anything.
+    _solutions = TSolutions(_parameters);
+    if (parameters._uh)
+    {
+        std::random_device rd;
+        _uhgen = std::mt19937(rd());
+        _uhgen.seed(static_cast<uint64_t>(time(nullptr)));
+        _uhunif = std::uniform_real_distribution<>(0,1);
+    }
+  }
+
+  template<class TParameters,class TSolutions,class TStopCriteria>
   ESOStrategy<TParameters,TSolutions,TStopCriteria>::ESOStrategy(FitFunc &func,
 								 TParameters &parameters,
 								 const TSolutions &solutions)
@@ -73,6 +94,23 @@ namespace libcmaes
 		_uhgen = std::mt19937(rd());
 		_uhgen.seed(static_cast<uint64_t>(time(nullptr)));
 		_uhunif = std::uniform_real_distribution<>(0,1);
+    }
+  }
+
+  template<class TParameters,class TSolutions,class TStopCriteria>
+  ESOStrategy<TParameters,TSolutions,TStopCriteria>::ESOStrategy(ConstrFitFunc &func,
+                                 TParameters &parameters,
+                                 const TSolutions &solutions)
+    :_cfunc(func),_nevals(0),_niter(0),_parameters(parameters)
+  {
+    _pfunc = [](const TParameters&,const TSolutions&){return 0;}; // high level progress function does do anything.
+    start_from_solution(solutions);
+    if (parameters._uh)
+    {
+        std::random_device rd;
+        _uhgen = std::mt19937(rd());
+        _uhgen.seed(static_cast<uint64_t>(time(nullptr)));
+        _uhunif = std::uniform_real_distribution<>(0,1);
     }
   }
   

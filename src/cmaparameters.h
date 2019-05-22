@@ -294,9 +294,9 @@ namespace libcmaes
       // s Successful trace
       double _cs;     // i can substitute this with double _cc     (it is used for s the successful trace)
       // sigma (learning rate)
-      double _c_p;   // i can substitute this with double _csigma (the same role)
+      double _c_p = 1/12;   // i can substitute this with double _csigma (the same role)
       double _d;
-      double _P_target;
+      double _P_target = 2/12;
       // covariance
       double _c_cov_plus;     // i can substitute this with double _c1 (exactly the same parameters in terms of role inside the algorithm)
       double _c_cov_minus;    // it cannnot be substituted because in AcovarianceUpdate depend upon _alphaminusmin and it is derived from this and continuosly updated

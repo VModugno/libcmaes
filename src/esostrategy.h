@@ -67,6 +67,9 @@ namespace libcmaes
     ESOStrategy(FitFunc &func,
 		        TParameters &parameters);
 
+    ESOStrategy(ConstrFitFunc &func,
+                TParameters &parameters);
+
     /**
      * \brief constructor for starting from an existing solution.
      * @param func objective function to minimize
@@ -76,6 +79,9 @@ namespace libcmaes
     ESOStrategy(FitFunc &func,
 		        TParameters &parameters,
 		        const TSolutions &solutions);
+    ESOStrategy(ConstrFitFunc &func,
+                TParameters &parameters,
+                const TSolutions &solutions);
     
   protected:
     ~ESOStrategy();
@@ -257,6 +263,7 @@ namespace libcmaes
     GradFunc _gfunc = nullptr; /**< gradient function, when available. */
     PlotFunc<TParameters,TSolutions> _pffunc; /**< possibly custom stream data to file function. */
     FitFunc _funcaux;
+    ConstrFitFunc _constrfuncaux;
     bool _initial_elitist = false; /**< restarts from and re-injects best seen solution if not the final one. */
 
   private:
