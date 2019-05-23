@@ -89,6 +89,11 @@ namespace libcmaes
 	:TESOStrategy(func,parameters)
 	{
 	}
+      /**
+       * \brief constructor
+       * @param func function to minimize with constraints
+       * @param parameters optimization parameters
+       */
 
       ESOptimizer(ConstrFitFunc &func,
           TParameters &parameters)
@@ -108,6 +113,13 @@ namespace libcmaes
 	:TESOStrategy(func,parameters,solution)
 	{
 	}
+
+      /**
+       * \brief constructor for starting from an existing solution
+       * @param func function to minimize with constraints
+       * @param parameters optimization parameters
+       * @param solution solution to start from
+       */
       ESOptimizer(ConstrFitFunc &func,
           TParameters &parameters,
           const TSolutions &solution)

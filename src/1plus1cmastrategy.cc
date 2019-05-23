@@ -180,7 +180,8 @@ namespace libcmaes
     // sampling from current distribution
 	dMat pop;
 	eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1);
-	pop                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
+     pop                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
+//    pop                                = eostrat<TGenoPheno>::_solutions._xmean; //+ eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
 
 
 
@@ -252,7 +253,6 @@ namespace libcmaes
     std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
     eostrat<TGenoPheno>::_solutions._elapsed_ask = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
 #endif
-
     return pop;
   }
 
@@ -268,10 +268,11 @@ namespace libcmaes
       {
     	  eostrat<TGenoPheno>::_solutions._candidates.at(r).set_x(candidates.col(r));
     	  eostrat<TGenoPheno>::_solutions._candidates.at(r).set_id(r);
+          std::vector<double> violations;
   		if (phenocandidates.size())
-  			eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_func(phenocandidates.col(r).data(),candidates.rows()));
+            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(phenocandidates.col(r).data(),candidates.rows(),violations));
   		else
-  			eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_func(candidates.col(r).data(),candidates.rows()));
+            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(candidates.col(r).data(),candidates.rows(),violations));
 
   		//std::cerr << "candidate x: " << _solutions._candidates.at(r)._x.transpose() << std::endl;
       }
@@ -338,7 +339,6 @@ namespace libcmaes
 #ifdef HAVE_DEBUG
     std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
 #endif
-
     // sort candidates.
 
     // call on tpa computation of s(t)
@@ -346,7 +346,7 @@ namespace libcmaes
     //  eostrat<TGenoPheno>::tpa_update();
 
     // update function value history, as needed.
-    //eostrat<TGenoPheno>::_solutions.update_best_candidates();
+    eostrat<TGenoPheno>::_solutions.update_best_candidates();
 
     // CMA-ES update, depends on the selected 'flavor'.
     TCovarianceUpdate::update(eostrat<TGenoPheno>::_parameters,_esolver,eostrat<TGenoPheno>::_solutions);
@@ -398,7 +398,6 @@ namespace libcmaes
 		eostrat<TGenoPheno>::_solutions._best_seen_candidate = eostrat<TGenoPheno>::_solutions._initial_candidate;
 		this->update_fevals(1);
     }*/
-
     std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
     while(!stop())
     {

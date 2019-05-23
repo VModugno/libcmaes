@@ -36,7 +36,7 @@ FitFunc cigtab = [](const double *x, const int N)
   return sum;
 };
 
-ConstrFitFunc cigtab1 = [](const double *x, const int N, std::vector<double>& violation)
+ConstrFitFunc constrcigtab = [](const double *x, const int N, std::vector<double>& violation)
 {
   int i;
   double sum = 1e4*x[0]*x[0] + 1e-4*x[1]*x[1];
@@ -58,18 +58,16 @@ int main(int argc, char *argv[])
 
   int dim = 10;
   std::vector<double> x0 = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+//  std::vector<double> violations;
   double sigma = 0.2;
   int lambda = 10;
   CMAParameters<> cmaparams(x0,sigma,lambda);
-
   ESOptimizer<CMAStrategy<CovarianceUpdate>,CMAParameters<>> cmaes(cigtab,cmaparams);
-
-  ESOptimizer<OnePlusOneCMAStrategy<CovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(cigtab1,cmaparams);
+  ESOptimizer<OnePlusOneCMAStrategy<CovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(constrcigtab,cmaparams);
   cmaes.optimize();
-  // seg fault below
-//   onePlusOneCmaes.optimize();
+  onePlusOneCmaes.optimize();
   double edm = cmaes.edm();
-  // double edm1 = onePlusOneCmaes.edm();
+//  double edm1 = onePlusOneCmaes.edm();
   std::cerr << "EDM " << edm << " / EDM/fm=" << edm / cmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
-  // std::cerr << "EDM " << edm1 << " / EDM/fm=" << edm1 / onePlusOneCmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
+//  std::cerr << "EDM " << edm1 << " / EDM/fm=" << edm1 / onePlusOneCmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
 }

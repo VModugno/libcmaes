@@ -117,7 +117,7 @@ namespace libcmaes
        */
     int optimize()
     {
-      return optimize(std::bind(&ESOStrategy<CMAParameters<TGenoPheno>,CMASolutions,CMAStopCriteria<TGenoPheno>>::eval,this,std::placeholders::_1,std::placeholders::_2),
+      return optimize(std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::eval,this,std::placeholders::_1,std::placeholders::_2),
 		      std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::ask,this),
 		      std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::tell,this));
     }

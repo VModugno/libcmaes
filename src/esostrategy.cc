@@ -127,7 +127,9 @@ namespace libcmaes
 		std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
 	#endif
     // one candidate per row.
+//    std::cout<<"eval(....) esostrategy"<<std::endl;
     #pragma omp parallel for if (_parameters._mt_feval)
+
     for (int r=0;r<candidates.cols();r++)
     {
 		_solutions._candidates.at(r).set_x(candidates.col(r));

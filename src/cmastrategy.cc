@@ -337,7 +337,6 @@ namespace libcmaes
     //debug
     //DLOG(INFO) << "optimize()\n";
     //debug
-
     if (eostrat<TGenoPheno>::_initial_elitist 
 	|| eostrat<TGenoPheno>::_parameters._initial_elitist
 	|| eostrat<TGenoPheno>::_parameters._elitist
