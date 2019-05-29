@@ -213,14 +213,39 @@ namespace libcmaes
     dVec vgradf(_parameters._dim);
     dVec epsilon = 1e-8 * (dVec::Constant(_parameters._dim,1.0) + x.cwiseAbs());
     double fx = _func(x.data(),_parameters._dim);
+//    double fx = _func(x.data(),_parameters._dim,_solutions._constraints_violations);
     #pragma omp parallel for if (_parameters._mt_feval)
     for (int i=0;i<_parameters._dim;i++)
     {
 		dVec ei1 = x;
 		ei1(i,0) += epsilon(i);
 		ei1(i,0) = std::min(ei1(i,0),_parameters.get_gp().get_boundstrategy_ref().getUBound(i));
-		double gradi = (_func(ei1.data(),_parameters._dim) - fx)/epsilon(i);
+        double gradi = (_func(ei1.data(),_parameters._dim) - fx)/epsilon(i);
+//        double gradi = (_cfunc(ei1.data(),_parameters._dim ,_solutions._constraints_violations) - fx)/epsilon(i);
 		vgradf(i,0) = gradi;
+    }
+    update_fevals(_parameters._dim+1); // numerical gradient increases the budget.
+    return vgradf;
+  }
+
+  template<class TParameters,class TSolutions,class TStopCriteria>
+  dVec ESOStrategy<TParameters,TSolutions,TStopCriteria>::constr_gradf(const dVec &x)
+  {
+    if (_gfunc != nullptr)
+      return _gfunc(x.data(),_parameters._dim);
+    dVec vgradf(_parameters._dim);
+    dVec epsilon = 1e-8 * (dVec::Constant(_parameters._dim,1.0) + x.cwiseAbs());
+//    double fx = _func(x.data(),_parameters._dim);
+    double fx = _cfunc(x.data(),_parameters._dim,_solutions._constraints_violations);
+    #pragma omp parallel for if (_parameters._mt_feval)
+    for (int i=0;i<_parameters._dim;i++)
+    {
+        dVec ei1 = x;
+        ei1(i,0) += epsilon(i);
+        ei1(i,0) = std::min(ei1(i,0),_parameters.get_gp().get_boundstrategy_ref().getUBound(i));
+//		double gradi = (_func(ei1.data(),_parameters._dim) - fx)/epsilon(i);
+        double gradi = (_cfunc(ei1.data(),_parameters._dim ,_solutions._constraints_violations) - fx)/epsilon(i);
+        vgradf(i,0) = gradi;
     }
     update_fevals(_parameters._dim+1); // numerical gradient increases the budget.
     return vgradf;
@@ -244,6 +269,25 @@ namespace libcmaes
     dMat gradmn;
     if (!_parameters._sep)
       gradmn = _solutions._leigenvectors*_solutions._leigenvalues.cwiseSqrt().asDiagonal() * gradff;
+    else gradmn = _solutions._sepcov.cwiseSqrt().cwiseProduct(gradff);
+    double gradn = _solutions._sigma * gradmn.norm();
+    edm *= gradn;
+    _solutions._edm = edm;
+    return edm;
+  }
+
+  template<class TParameters,class TSolutions,class TStopCriteria>
+  double ESOStrategy<TParameters,TSolutions,TStopCriteria>::constr_edm()
+  {
+    int n = _parameters._dim;
+    double edm = n / (10.0*(sqrt(_parameters._lambda / 4.0 + 0.5)-1));
+    dVec gradff = constr_gradf(_parameters._gp.pheno(_solutions._xmean));
+    dVec gradgpf = gradgp(_solutions._xmean);
+    gradff = gradff.cwiseProduct(gradgpf);
+    dMat gradmn;
+    if (!_parameters._sep){
+      gradmn = _solutions._leigenvectors*_solutions._leigenvalues.cwiseSqrt().asDiagonal() * gradff;
+    }
     else gradmn = _solutions._sepcov.cwiseSqrt().cwiseProduct(gradff);
     double gradn = _solutions._sigma * gradmn.norm();
     edm *= gradn;

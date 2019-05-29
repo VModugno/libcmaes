@@ -100,6 +100,7 @@ namespace libcmaes
   OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::OnePlusOneCMAStrategy(ConstrFitFunc &func,CMAParameters<TGenoPheno> &parameters)
     :ESOStrategy<CMAParameters<TGenoPheno>,CMASolutions,CMAStopCriteria<TGenoPheno> >(func,parameters)
   {
+
     eostrat<TGenoPheno>::_pfunc = _defaultPFunc;
     if (!parameters._full_fplot)
       eostrat<TGenoPheno>::_pffunc = _defaultFPFunc;
@@ -117,6 +118,7 @@ namespace libcmaes
 		_stopcriteria.set_criteria_active((*mit).first,(*mit).second);
 		++mit;
     }
+     parameters._constraints_on = true;
   }
 
   template <class TCovarianceUpdate, class TGenoPheno>
@@ -275,11 +277,11 @@ namespace libcmaes
       {
     	  eostrat<TGenoPheno>::_solutions._candidates.at(r).set_x(candidates.col(r));
     	  eostrat<TGenoPheno>::_solutions._candidates.at(r).set_id(r);
-          std::vector<double> violations;
+//          std::vector<double> violations;
   		if (phenocandidates.size())
-            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(phenocandidates.col(r).data(),candidates.rows(),violations));
+            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(phenocandidates.col(r).data(),candidates.rows(),eostrat<TGenoPheno>::_solutions._constraints_violations));
   		else
-            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(candidates.col(r).data(),candidates.rows(),violations));
+            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(candidates.col(r).data(),candidates.rows(),eostrat<TGenoPheno>::_solutions._constraints_violations));
 
   		//std::cerr << "candidate x: " << _solutions._candidates.at(r)._x.transpose() << std::endl;
       }
@@ -358,6 +360,7 @@ namespace libcmaes
     //
 
     // CMA-ES update, depends on the selected 'flavor'.
+    eostrat<TGenoPheno>::_parameters._constraints_on = true;
     TCovarianceUpdate::update(eostrat<TGenoPheno>::_parameters,_esolver,eostrat<TGenoPheno>::_solutions);
 
     //if (eostrat<TGenoPheno>::_parameters._uh)

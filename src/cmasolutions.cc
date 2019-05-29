@@ -89,6 +89,7 @@ namespace libcmaes
 
   void CMASolutions::update_best_candidates()
   {
+    _violated_constrained = true;
     _best_candidates_hist.push_back(_candidates.at(0)); // supposed candidates is sorted.
     _k_best_candidates_hist.push_back(_candidates.at(_kcand));
     if ((int)_best_candidates_hist.size() > _max_hist)
@@ -98,6 +99,9 @@ namespace libcmaes
       }
     
     _bfvalues.push_back(_candidates.at(0).get_fvalue());
+    if (_performances.size()==0 ){
+        _performances.push_back(_candidates.at(0).get_fvalue());
+    }
     if (_bfvalues.size() > 20)
       _bfvalues.erase(_bfvalues.begin());
 

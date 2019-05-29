@@ -31,6 +31,7 @@ namespace libcmaes
 				                           CMASolutions &solutions)
   {
 	// some constraints are violated and constraints evaluation is active
+//      parameters._constraints_on = true;
 	if(solutions._violated_constrained && parameters._constraints_on){
 		 //no update mean
 		 //no update s ( or as is defined here pc)

@@ -181,6 +181,13 @@ namespace libcmaes
     dVec gradf(const dVec &x);
 
     /**
+     * \brief returns numerical gradient of constrained objective function at x.
+     * @param x point at which to compute the gradient
+     * @return vector of numerical gradient of the objective function at x.
+     */
+    dVec constr_gradf(const dVec &x);
+
+    /**
      * \brief returns the numerical gradient of the objective function in phenotype space
      * @param x point in genotype coordinates at which to compute the gradient
      * @return vector of numerical gradient computed in phenotype space
@@ -192,6 +199,12 @@ namespace libcmaes
      * @return EDM
      */
     double edm();
+
+    /**
+     * \brief computes expected distance to minimum (EDM) for constrained objective.
+     * @return EDM
+     */
+    double constr_edm();
 
     /**
      * \brief returns reference to current solution object

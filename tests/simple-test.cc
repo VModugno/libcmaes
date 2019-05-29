@@ -23,6 +23,7 @@
 #include "cmastrategy.h"
 #include "llogging.h"
 #include "1plus1cmastrategy.h"
+#include "cmaes.h"
 
 using namespace libcmaes;
 
@@ -46,6 +47,17 @@ ConstrFitFunc constrcigtab = [](const double *x, const int N, std::vector<double
   return sum;
 };
 
+ConstrFitFunc onePlusOneProb_g06 = [](const double *x, const int N, std::vector<double>& violation)
+{
+    double fitness = pow((x[0]-10),3)+pow((x[1]-20),3);
+    double constr1 = - pow((x[0]-5),2)- pow((x[1]-6),2) + 100;
+    double constr2 = pow((x[0]-6),2) + pow((x[1]-5),2) -82.81;
+    violation.push_back(constr1);
+    violation.push_back(constr2);
+    return fitness;
+
+};
+
 
 int main(int argc, char *argv[])
 {
@@ -55,19 +67,26 @@ int main(int argc, char *argv[])
   google::SetLogDestination(google::INFO,"");
   //FLAGS_log_prefix=false;
 #endif
-
-  int dim = 10;
   std::vector<double> x0 = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
-//  std::vector<double> violations;
   double sigma = 0.2;
   int lambda = 10;
   CMAParameters<> cmaparams(x0,sigma,lambda);
   ESOptimizer<CMAStrategy<CovarianceUpdate>,CMAParameters<>> cmaes(cigtab,cmaparams);
-  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(constrcigtab,cmaparams);
   cmaes.optimize();
-//  onePlusOneCmaes.optimize();
   double edm = cmaes.edm();
-//  double edm1 = onePlusOneCmaes.edm();
   std::cerr << "EDM " << edm << " / EDM/fm=" << edm / cmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
-//  std::cerr << "EDM " << edm1 << " / EDM/fm=" << edm1 / onePlusOneCmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
+
+// 1+1cmaes paper problem g06
+  int dim  = 2;
+  double lbounds[dim],ubounds[dim];
+  lbounds[0]=13;lbounds[1]=0;
+  ubounds[0]=100;ubounds[1]=100;
+  std::vector<double> opePlusOne_x0 = {1.0,1.0};
+  libcmaes:: GenoPheno<pwqBoundStrategy> gp(lbounds,ubounds,dim); // genotype / phenotype transform associated to bounds.
+//  CMAParameters<GenoPheno<pwqBoundStrategy>> cmaparams(x0,sigma,-1,0,gp);
+  CMAParameters<> onePlusOne_cmaparams(opePlusOne_x0,sigma,-1);
+  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(onePlusOneProb_g06,onePlusOne_cmaparams);
+  onePlusOneCmaes.optimize();
+  double edm1 = onePlusOneCmaes.constr_edm();
+  std::cerr << "EDM " << edm1 << " / EDM/fm=" << edm1 / onePlusOneCmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
 }
