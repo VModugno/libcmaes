@@ -40,7 +40,6 @@ namespace libcmaes
 		 dMat w     = dMat::Zero(solutions._vci.size(),parameters._dim);
 		 dMat value = dMat::Zero(solutions._A.rows(),solutions._A.cols());
 
-
 		 for(unsigned int j = 0;j<solutions._vci.size();j++){
 			 jj = solutions._vci[j];
 			 //update exponentially fading record vj
@@ -60,15 +59,14 @@ namespace libcmaes
 		 solutions._performances.push_back(solutions._performances.back());
 	}
 	else{  // all the constraints are satisfied
-
-		if(solutions._candidates[0].get_fvalue() > solutions._performances.back())
+        if(solutions._candidates[0].get_fvalue() > solutions._performances.back())
 			solutions._Psucc = (1- parameters._c_p)*solutions._Psucc + parameters._c_p;
 		else
 			solutions._Psucc = (1-parameters._c_p)*solutions._Psucc;
 		// update sigma, sigma(k+1) = sigma(k)*exp( (1/d) * (P_succ - P_target) / (1-P_target) );
 		solutions._sigma = solutions._sigma*std::exp( (1/parameters._d) * (solutions._Psucc - parameters._P_target) / (1-parameters._P_target) );
 
-		if(solutions._candidates[0].get_fvalue() > solutions._performances.back()){ // performance is better
+        if(solutions._candidates[0].get_fvalue() > solutions._performances.back()){ // performance is better
 			//no update v
 			dMat w     = dVec::Zero(parameters._dim);
 			// update mean

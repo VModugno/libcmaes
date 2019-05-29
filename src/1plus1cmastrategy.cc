@@ -179,11 +179,18 @@ namespace libcmaes
 
     // sampling from current distribution
 	dMat pop;
-	eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1);
+
+    _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+    _esolver.setCovar(eostrat<TGenoPheno>::_solutions._cov);
+
+    eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1.0);
+    Eigen::LLT<Eigen::MatrixXd> lltOfA(eostrat<TGenoPheno>::_solutions._cov);
+    eostrat<TGenoPheno>::_solutions._A = lltOfA.matrixL();
+//            LLT<MatrixXd> lltOfA(A); // compute the Cholesky decomposition of A
+//            MatrixXd L = lltOfA.matrixL(); // retrieve factor L  in the decomposition
+    // debug
+    //
      pop                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
-//    pop                                = eostrat<TGenoPheno>::_solutions._xmean; //+ eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
-
-
 
     // sample for multivariate normal distribution, produces one candidate per column.
     /*dMat pop;
@@ -347,6 +354,8 @@ namespace libcmaes
 
     // update function value history, as needed.
     eostrat<TGenoPheno>::_solutions.update_best_candidates();
+    //debug
+    //
 
     // CMA-ES update, depends on the selected 'flavor'.
     TCovarianceUpdate::update(eostrat<TGenoPheno>::_parameters,_esolver,eostrat<TGenoPheno>::_solutions);
@@ -440,9 +449,9 @@ namespace libcmaes
     eostrat<TGenoPheno>::_pffunc(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions,*_fplotstream);
   }
 
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<NoBoundStrategy> >;
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<pwqBoundStrategy> >;
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy> >;
-  template class OnePlusOneCMAStrategy<CovarianceUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy> >;
+  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<NoBoundStrategy> >;
+  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy> >;
+  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy> >;
+  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy> >;
 
 }

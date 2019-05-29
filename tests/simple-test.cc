@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
   int lambda = 10;
   CMAParameters<> cmaparams(x0,sigma,lambda);
   ESOptimizer<CMAStrategy<CovarianceUpdate>,CMAParameters<>> cmaes(cigtab,cmaparams);
-  ESOptimizer<OnePlusOneCMAStrategy<CovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(constrcigtab,cmaparams);
+  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate>,CMAParameters<>> onePlusOneCmaes(constrcigtab,cmaparams);
   cmaes.optimize();
-  onePlusOneCmaes.optimize();
+//  onePlusOneCmaes.optimize();
   double edm = cmaes.edm();
 //  double edm1 = onePlusOneCmaes.edm();
   std::cerr << "EDM " << edm << " / EDM/fm=" << edm / cmaes.get_solutions().best_candidate().get_fvalue() << std::endl;
