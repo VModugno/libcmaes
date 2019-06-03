@@ -88,6 +88,9 @@ namespace libcmaes
      */
     void update_best_candidates();
 
+
+    void update_1plus1_sol_params();
+
     /**
      * \brief updates reference eigenvalue and eigenvectors, for use in 
      *        termination criteria.

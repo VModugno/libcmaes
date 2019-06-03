@@ -157,8 +157,8 @@ namespace libcmaes
 	if (eostrat<TGenoPheno>::_niter == 0 || !eostrat<TGenoPheno>::_parameters._lazy_update
 	    || eostrat<TGenoPheno>::_niter - eostrat<TGenoPheno>::_solutions._eigeniter > eostrat<TGenoPheno>::_parameters._lazy_value)
 	  {
-	    eostrat<TGenoPheno>::_solutions._eigeniter = eostrat<TGenoPheno>::_niter;
-	    _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+        eostrat<TGenoPheno>::_solutions._eigeniter = eostrat<TGenoPheno>::_niter;
+        _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
 	    _esolver.setCovar(eostrat<TGenoPheno>::_solutions._cov);
 	    eostrat<TGenoPheno>::_solutions._updated_eigen = true;
 	  }
@@ -326,8 +326,9 @@ namespace libcmaes
     if (eostrat<TGenoPheno>::_niter == 0)
       return false;
 
-    if ((eostrat<TGenoPheno>::_solutions._run_status = _stopcriteria.stop(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions)) != CONT)
-      return true;
+    if ((eostrat<TGenoPheno>::_solutions._run_status = _stopcriteria.stop(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions)) != CONT){
+        return true;
+    }
     else return false;
   }
 

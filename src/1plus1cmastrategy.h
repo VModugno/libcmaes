@@ -43,7 +43,7 @@ namespace libcmaes
    *        In Proceedings of the 14th annual conference on Genetic and evolutionary computation (GECCO '12),
    *        Terence Soule (Ed.). ACM, New York, NY, USA, 297-304. DOI: https://doi.org/10.1145/2330163.2330207
    */
-  template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
+  template <class TCovarianceUpdate,class TGenoPheno>
     class CMAES_EXPORT OnePlusOneCMAStrategy : public ESOStrategy<CMAParameters<TGenoPheno>,CMASolutions,CMAStopCriteria<TGenoPheno> >
     {
     public:
@@ -119,8 +119,8 @@ namespace libcmaes
     int optimize()
     {
       return optimize(std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::eval,this,std::placeholders::_1,std::placeholders::_2),
-		      std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::ask,this),
-		      std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::tell,this));
+              std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::ask,this),
+              std::bind(&OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::tell,this));
     }
 
       /**

@@ -119,6 +119,13 @@ namespace libcmaes
 		++mit;
     }
      parameters._constraints_on = true;
+//     _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+     dVec init_mean(eostrat<TGenoPheno>::_parameters._dim);
+     for (int i=0;i<eostrat<TGenoPheno>::_parameters._dim;++i){
+         init_mean(i)= 0.0;
+     }
+     _esolver.setMean(init_mean);
+     _esolver.setCovar(eostrat<TGenoPheno>::_solutions._cov);
   }
 
   template <class TCovarianceUpdate, class TGenoPheno>
@@ -155,46 +162,51 @@ namespace libcmaes
 
 
     // compute eigenvalues and eigenvectors.
-    /*if (!eostrat<TGenoPheno>::_parameters._sep && !eostrat<TGenoPheno>::_parameters._vd)
-    {
-		eostrat<TGenoPheno>::_solutions._updated_eigen = false;
-		if (eostrat<TGenoPheno>::_niter == 0 || !eostrat<TGenoPheno>::_parameters._lazy_update
-			|| eostrat<TGenoPheno>::_niter - eostrat<TGenoPheno>::_solutions._eigeniter > eostrat<TGenoPheno>::_parameters._lazy_value)
-		{
-			eostrat<TGenoPheno>::_solutions._eigeniter = eostrat<TGenoPheno>::_niter;
-			_esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
-			_esolver.setCovar(eostrat<TGenoPheno>::_solutions._cov);
-			eostrat<TGenoPheno>::_solutions._updated_eigen = true;
-		}
-    }
-    else if (eostrat<TGenoPheno>::_parameters._sep)
-    {
-		_esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
-		_esolver.set_covar(eostrat<TGenoPheno>::_solutions._sepcov);
-		_esolver.set_transform(eostrat<TGenoPheno>::_solutions._sepcov.cwiseSqrt());
-    }
-    else if (eostrat<TGenoPheno>::_parameters._vd)
-    {
-		_esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
-		_esolver.set_covar(eostrat<TGenoPheno>::_solutions._sepcov);
-    }*/
+//    if (!eostrat<TGenoPheno>::_parameters._sep && !eostrat<TGenoPheno>::_parameters._vd)
+//    {
+//        eostrat<TGenoPheno>::_solutions._updated_eigen = false;
+//        if (eostrat<TGenoPheno>::_niter == 0 || !eostrat<TGenoPheno>::_parameters._lazy_update
+//            || eostrat<TGenoPheno>::_niter - eostrat<TGenoPheno>::_solutions._eigeniter > eostrat<TGenoPheno>::_parameters._lazy_value)
+//        {
+//            eostrat<TGenoPheno>::_solutions._eigeniter = eostrat<TGenoPheno>::_niter;
+//            _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+//            _esolver.setCovar(eostrat<TGenoPheno>::_solutions._cov);
+//            eostrat<TGenoPheno>::_solutions._updated_eigen = true;
+//        }
+//    }
+//    else if (eostrat<TGenoPheno>::_parameters._sep)
+//    {
+//        _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+//        _esolver.set_covar(eostrat<TGenoPheno>::_solutions._sepcov);
+//        _esolver.set_transform(eostrat<TGenoPheno>::_solutions._sepcov.cwiseSqrt());
+//    }
+//    else if (eostrat<TGenoPheno>::_parameters._vd)
+//    {
+//        _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+//        _esolver.set_covar(eostrat<TGenoPheno>::_solutions._sepcov);
+//    }
 
     // sampling from current distribution
-	dMat pop;
+    dVec pop_unbounded;
 
-    _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
+
+//    _esolver.setMean(eostrat<TGenoPheno>::_solutions._xmean);
     _esolver.setCovar(eostrat<TGenoPheno>::_solutions._cov);
-
     eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1.0);
-    Eigen::LLT<Eigen::MatrixXd> lltOfA(eostrat<TGenoPheno>::_solutions._cov);
-    eostrat<TGenoPheno>::_solutions._A = lltOfA.matrixL();
+//    std::cout<<"_z  :"<<eostrat<TGenoPheno>::_solutions._z<<std::endl;
+//    eostrat<TGenoPheno>::_solutions._z = _esolver.samples(eostrat<TGenoPheno>::_parameters._lambda,eostrat<TGenoPheno>::_solutions._sigma);
+//    Eigen::LLT<Eigen::MatrixXd> lltOfA(eostrat<TGenoPheno>::_solutions._cov);
+//    eostrat<TGenoPheno>::_solutions._A = lltOfA.matrixL();
 //            LLT<MatrixXd> lltOfA(A); // compute the Cholesky decomposition of A
 //            MatrixXd L = lltOfA.matrixL(); // retrieve factor L  in the decomposition
     // debug
     //
-     pop                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
-
-    // sample for multivariate normal distribution, produces one candidate per column.
+     pop_unbounded                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
+//
+        dVec pop = pop_unbounded;
+//        eostrat<TGenoPheno>::_parameters._gp.get_boundstrategy().shift_into_feasible(pop_unbounded,pop);
+          eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().to_f_representation(pop_unbounded,pop);
+          // sample for multivariate normal distribution, produces one candidate per column.
     /*dMat pop;
     if (!eostrat<TGenoPheno>::_parameters._sep && !eostrat<TGenoPheno>::_parameters._vd)
       pop = _esolver.samples(eostrat<TGenoPheno>::_parameters._lambda,eostrat<TGenoPheno>::_solutions._sigma); // Eq (1).
@@ -252,7 +264,6 @@ namespace libcmaes
 			pop.block((*it).first,0,1,pop.cols()) = dVec::Constant(pop.cols(),(*it).second).transpose();
 		}
     }
-
     //debug
     /*DLOG(INFO) << "ask: produced " << pop.cols() << " candidates\n";
       std::cerr << pop << std::endl;*/
@@ -355,23 +366,27 @@ namespace libcmaes
     //  eostrat<TGenoPheno>::tpa_update();
 
     // update function value history, as needed.
+
     eostrat<TGenoPheno>::_solutions.update_best_candidates();
+
     //debug
     //
 
     // CMA-ES update, depends on the selected 'flavor'.
-    eostrat<TGenoPheno>::_parameters._constraints_on = true;
+//    eostrat<TGenoPheno>::_parameters._constraints_on = true;
+    eostrat<TGenoPheno>::_solutions.update_1plus1_sol_params();
     TCovarianceUpdate::update(eostrat<TGenoPheno>::_parameters,_esolver,eostrat<TGenoPheno>::_solutions);
 
-    //if (eostrat<TGenoPheno>::_parameters._uh)
-    //  if (eostrat<TGenoPheno>::_solutions._suh > 0.0)
-	//    eostrat<TGenoPheno>::_solutions._sigma *= eostrat<TGenoPheno>::_parameters._alphathuh;
 
-    // other stuff.
-    //if (!eostrat<TGenoPheno>::_parameters._sep && !eostrat<TGenoPheno>::_parameters._vd)
-    //    eostrat<TGenoPheno>::_solutions.update_eigenv(_esolver._eigenSolver.eigenvalues(),_esolver._eigenSolver.eigenvectors());
-    //else
-    //	eostrat<TGenoPheno>::_solutions.update_eigenv(eostrat<TGenoPheno>::_solutions._sepcov,dMat::Constant(eostrat<TGenoPheno>::_parameters._dim,1,1.0));
+//    if (eostrat<TGenoPheno>::_parameters._uh)
+//      if (eostrat<TGenoPheno>::_solutions._suh > 0.0)
+//        eostrat<TGenoPheno>::_solutions._sigma *= eostrat<TGenoPheno>::_parameters._alphathuh;
+
+     //other stuff.
+//    if (!eostrat<TGenoPheno>::_parameters._sep && !eostrat<TGenoPheno>::_parameters._vd)
+        eostrat<TGenoPheno>::_solutions.update_eigenv(_esolver._eigenSolver.eigenvalues(),_esolver._eigenSolver.eigenvectors());
+//    else
+//        eostrat<TGenoPheno>::_solutions.update_eigenv(eostrat<TGenoPheno>::_solutions._sepcov,dMat::Constant(eostrat<TGenoPheno>::_parameters._dim,1,1.0));
 #ifdef HAVE_DEBUG
     std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
     eostrat<TGenoPheno>::_solutions._elapsed_tell = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
@@ -381,20 +396,28 @@ namespace libcmaes
   template <class TCovarianceUpdate, class TGenoPheno>
   bool OnePlusOneCMAStrategy<TCovarianceUpdate,TGenoPheno>::stop()
   {
-    if (eostrat<TGenoPheno>::_solutions._run_status < 0) // an error occured, most likely out of memory at cov matrix creation.
-      return true;
+    if (eostrat<TGenoPheno>::_solutions._run_status < 0){ // an error occured, most likely out of memory at cov matrix creation.
+        return true;
+    }
 
-    if (eostrat<TGenoPheno>::_pfunc(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions)) // progress function.
-      return true; // end on progress function internal termination, possibly custom.
+    if (eostrat<TGenoPheno>::_pfunc(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions)){ // progress function.
+        return true; // end on progress function internal termination, possibly custom.
+    }
 
     if (!eostrat<TGenoPheno>::_parameters._fplot.empty())
       plot();
 
-    if (eostrat<TGenoPheno>::_niter == 0)
+    if (eostrat<TGenoPheno>::_niter == 0){
       return false;
-
-    if ((eostrat<TGenoPheno>::_solutions._run_status = _stopcriteria.stop(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions)) != CONT)
-      return true;
+    }
+    eostrat<TGenoPheno>::_solutions._run_status = _stopcriteria.stop(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions);
+//    if (eostrat<TGenoPheno>::_solutions._run_status==-13){
+//        eostrat<TGenoPheno>::_solutions._run_status = 0;
+//    }
+    if ((eostrat<TGenoPheno>::_solutions._run_status) != CONT){
+        std::cout<<"Status 1+1: "<<eostrat<TGenoPheno>::_solutions._run_status<<std::endl;
+        return true;
+    }
     else return false;
   }
 
@@ -411,16 +434,26 @@ namespace libcmaes
 		this->update_fevals(1);
     }*/
     std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
+    int count = 0;
+    dMat candidates;
+
     while(!stop())
     {
-		dMat candidates = askf();
+        if (count ==0){
+            candidates = eostrat<TGenoPheno>::_parameters._x0min;
+            Eigen::LLT<Eigen::MatrixXd> lltOfA(eostrat<TGenoPheno>::_solutions._cov);
+            eostrat<TGenoPheno>::_solutions._A = lltOfA.matrixL();
+        }
+        else candidates = askf();
 		evalf(candidates,eostrat<TGenoPheno>::_parameters._gp.pheno(candidates));
 		tellf();
 		eostrat<TGenoPheno>::inc_iter();
 		std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
 		eostrat<TGenoPheno>::_solutions._elapsed_last_iter = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
 		tstart = std::chrono::system_clock::now();
+        ++count;
     }
+
     //if (eostrat<TGenoPheno>::_parameters._with_edm)
     //  eostrat<TGenoPheno>::edm();
 
@@ -452,9 +485,9 @@ namespace libcmaes
     eostrat<TGenoPheno>::_pffunc(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions,*_fplotstream);
   }
 
-  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<NoBoundStrategy> >;
-  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy> >;
-  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy> >;
+//  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<NoBoundStrategy>>;
+  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>;
+//  template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<NoBoundStrategy,linScalingStrategy> >;
   template class OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy,linScalingStrategy> >;
 
 }

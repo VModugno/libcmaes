@@ -31,7 +31,6 @@ namespace libcmaes
 				                           CMASolutions &solutions)
   {
 	// some constraints are violated and constraints evaluation is active
-//      parameters._constraints_on = true;
 	if(solutions._violated_constrained && parameters._constraints_on){
 		 //no update mean
 		 //no update s ( or as is defined here pc)
@@ -40,7 +39,6 @@ namespace libcmaes
 		 int jj     = 0;
 		 dMat w     = dMat::Zero(solutions._vci.size(),parameters._dim);
 		 dMat value = dMat::Zero(solutions._A.rows(),solutions._A.cols());
-
 		 for(unsigned int j = 0;j<solutions._vci.size();j++){
 			 jj = solutions._vci[j];
 			 //update exponentially fading record vj
@@ -78,9 +76,13 @@ namespace libcmaes
 		    solutions._pc = (1 - parameters._cs)*solutions._pc + sqrt(parameters._cs*(2-parameters._cs))*(solutions._A*solutions._z);
 			// w = (A{k}^(-1)*s(k+1,:)')';
 			w = solutions._A.inverse()*solutions._pc;
-			// update A, A{k+1} = sqrt(1 - c_cov_plus)*A{k} + ( sqrt(1-c_cov_plus)/norm(w)^2 )*(sqrt(1 + (c_cov_plus*norm(w)^2)/(1-c_cov_plus) ) - 1 )*s(k+1,:)'*w
-			solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
 
+			// update A, A{k+1} = sqrt(1 - c_cov_plus)*A{k} + ( sqrt(1-c_cov_plus)/norm(w)^2 )*(sqrt(1 + (c_cov_plus*norm(w)^2)/(1-c_cov_plus) ) - 1 )*s(k+1,:)'*w
+            dMat A1 = sqrt(1 - parameters._c_cov_plus)*solutions._A;
+            dMat A2 = ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() )* (sqrt(1 + (parameters._c_cov_plus*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc*w.transpose());
+//            dMat A3 =
+//            solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
+            solutions._A = A1 + A2;
 		 }
 		 else{ // performance is worse
 			 // no update mean
@@ -89,9 +91,15 @@ namespace libcmaes
 			 // update performance with the last best value
 			 solutions._performances.push_back(solutions._performances.back());
 			 if(solutions._niter>5){
-			    if(solutions._candidates[0].get_fvalue() > solutions._performances[solutions._niter-5]) // performance is worse but better than the last fifth predecessor
+                if(solutions._candidates[0].get_fvalue() > solutions._performances[solutions._niter-5]){ // performance is worse but better than the last fifth predecessor
 			       // update A, A{k+1} = sqrt(1 + c_cov_minus)*A{k} + ( sqrt(1 + c_cov_minus)/norm(z)^2 )*( sqrt(1 - (c_cov_minus*norm(z)^2)/(1 + c_cov_minus)) - 1 )*A{k}*(z'*z)
-			    	solutions._A = sqrt(1 + parameters._c_cov_minus)*solutions._A + ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )*( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm())/(1 + parameters._c_cov_minus)) - 1 )*solutions._A*(solutions._z.transpose()*solutions._z);
+                    dMat A_1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
+                    dMat A_2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )*( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )*solutions._A*(solutions._z.transpose()*solutions._z);
+                    double A_21 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() );
+                    double A_22 = ( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 );
+                    dMat A_23 = (solutions._z.transpose()*solutions._z);
+                    solutions._A = A_1  + A_2 ;
+                }
 			    else{
 			     // A no update covariance
 			    }
@@ -104,72 +112,78 @@ namespace libcmaes
 
 	}
 
-    /*// compute mean, Eq. (2)
-    dVec xmean = dVec::Zero(parameters._dim);
-    for (int i=0;i<parameters._mu;i++)
-      xmean += parameters._weights[i] * solutions._candidates.at(i).get_x_dvec();
 
-    // reusable variables.
-    dVec diffxmean = 1.0/solutions._sigma * (xmean-solutions._xmean); // (m^{t+1}-m^t)/sigma^t
-    if (solutions._updated_eigen && !parameters._sep) //TODO: shall not recompute when using gradient, as it is computed in ask.
-      solutions._csqinv = esolver._eigenSolver.operatorInverseSqrt();
-    else if (parameters._sep)
-      solutions._sepcsqinv = solutions._sepcov.cwiseInverse().cwiseSqrt();
 
-    // update psigma, Eq. (3)
-    solutions._psigma = (1.0-parameters._csigma)*solutions._psigma;
-    if (!parameters._sep)
-      solutions._psigma += parameters._fact_ps * solutions._csqinv * diffxmean;
-    else
-      solutions._psigma += parameters._fact_ps * solutions._sepcsqinv.cwiseProduct(diffxmean);
+//    // compute mean, Eq. (2)
+//    dVec xmean = dVec::Zero(parameters._dim);
+//    for (int i=0;i<parameters._mu;i++)
+//      xmean += parameters._weights[i] * solutions._candidates.at(i).get_x_dvec();
+
+//    // reusable variables.
+//    dVec diffxmean = 1.0/solutions._sigma * (xmean-solutions._xmean); // (m^{t+1}-m^t)/sigma^t
+//    if (solutions._updated_eigen && !parameters._sep) //TODO: shall not recompute when using gradient, as it is computed in ask.
+//      solutions._csqinv = esolver._eigenSolver.operatorInverseSqrt();
+//    else if (parameters._sep)
+//      solutions._sepcsqinv = solutions._sepcov.cwiseInverse().cwiseSqrt();
+
+//    // update psigma, Eq. (3)
+//    solutions._psigma = (1.0-parameters._csigma)*solutions._psigma;
+//    if (!parameters._sep)
+//      solutions._psigma += parameters._fact_ps * solutions._csqinv * diffxmean;
+//    else
+//      solutions._psigma += parameters._fact_ps * solutions._sepcsqinv.cwiseProduct(diffxmean);
     double norm_ps = solutions._psigma.norm();
 
-    // update pc, Eq. (4)
-    solutions._hsig = 0;
-    double val_for_hsig = sqrt(1.0-pow(1.0-parameters._csigma,2.0*(solutions._niter+1)))*(1.4+2.0/(parameters._dim+1-parameters._fixed_p.size()))*parameters._chi;
-    if (norm_ps < val_for_hsig)
-      solutions._hsig = 1; //TODO: simplify equation instead.
-    solutions._pc = (1.0-parameters._cc) * solutions._pc + solutions._hsig * parameters._fact_pc * diffxmean;
-    dMat spc;
-    if (!parameters._sep)
-      spc = solutions._pc * solutions._pc.transpose();
-    else spc = solutions._pc.cwiseProduct(solutions._pc);
+//    // update pc, Eq. (4)
+//    solutions._hsig = 0;
+//    double val_for_hsig = sqrt(1.0-pow(1.0-parameters._csigma,2.0*(solutions._niter+1)))*(1.4+2.0/(parameters._dim+1-parameters._fixed_p.size()))*parameters._chi;
+//    if (norm_ps < val_for_hsig)
+//      solutions._hsig = 1; //TODO: simplify equation instead.
+//    solutions._pc = (1.0-parameters._cc) * solutions._pc + solutions._hsig * parameters._fact_pc * diffxmean;
+//    dMat spc;
+//    if (!parameters._sep)
+//      spc = solutions._pc * solutions._pc.transpose();
+//    else spc = solutions._pc.cwiseProduct(solutions._pc);
 
-    // covariance update, Eq (5).
-    dMat wdiff;
-    if (!parameters._sep)
-      wdiff = dMat::Zero(parameters._dim,parameters._dim);
-    else wdiff = dMat::Zero(parameters._dim,1);
-    for (int i=0;i<parameters._mu;i++)
-    {
-		dVec difftmp = solutions._candidates.at(i).get_x_dvec() - solutions._xmean;
-		if (!parameters._sep)
-		  wdiff += parameters._weights[i] * (difftmp*difftmp.transpose());
-		else wdiff += parameters._weights[i] * (difftmp.cwiseProduct(difftmp));
-    }
-    wdiff *= 1.0/(solutions._sigma*solutions._sigma);
-    if (!parameters._sep)
-    	solutions._cov = (1-parameters._c1-parameters._cmu+(1-solutions._hsig)*parameters._c1*parameters._cc*(2.0-parameters._cc))*solutions._cov + parameters._c1*spc + parameters._cmu*wdiff;
-    else
-    {
-    	solutions._sepcov = (1-parameters._c1-parameters._cmu+(1-solutions._hsig)*parameters._c1*parameters._cc*(2.0-parameters._cc))*solutions._sepcov + parameters._c1*spc + parameters._cmu*wdiff;
-    }
+//    // covariance update, Eq (5).
+//    dMat wdiff;
+//    if (!parameters._sep)
+//      wdiff = dMat::Zero(parameters._dim,parameters._dim);
+//    else wdiff = dMat::Zero(parameters._dim,1);
+//    for (int i=0;i<parameters._mu;i++)
+//    {
+//		dVec difftmp = solutions._candidates.at(i).get_x_dvec() - solutions._xmean;
+//		if (!parameters._sep)
+//		  wdiff += parameters._weights[i] * (difftmp*difftmp.transpose());
+//		else wdiff += parameters._weights[i] * (difftmp.cwiseProduct(difftmp));
+//    }
+//    wdiff *= 1.0/(solutions._sigma*solutions._sigma);
+//    if (!parameters._sep)
+//    	solutions._cov = (1-parameters._c1-parameters._cmu+(1-solutions._hsig)*parameters._c1*parameters._cc*(2.0-parameters._cc))*solutions._cov + parameters._c1*spc + parameters._cmu*wdiff;
+//    else
+//    {
+//    	solutions._sepcov = (1-parameters._c1-parameters._cmu+(1-solutions._hsig)*parameters._c1*parameters._cc*(2.0-parameters._cc))*solutions._sepcov + parameters._c1*spc + parameters._cmu*wdiff;
+//    }
 
     // sigma update, Eq. (6)
-    if (parameters._tpa < 2)
-      solutions._sigma *= std::exp((parameters._csigma / parameters._dsigma) * (norm_ps / parameters._chi - 1.0));
-    else if (solutions._niter > 0)
-      solutions._sigma *= std::exp(solutions._tpa_s / parameters._dsigma);
+//    if (parameters._tpa < 2)
+//      solutions._sigma *= std::exp((parameters._csigma / parameters._dsigma) * (norm_ps / parameters._chi - 1.0));
+//    else if (solutions._niter > 0)
+//      solutions._sigma *= std::exp(solutions._tpa_s / parameters._dsigma);
 
     // set mean.
-    if (parameters._tpa)
-      solutions._xmean_prev = solutions._xmean;
-    solutions._xmean = xmean; */
+//    if (parameters._tpa)
+//      solutions._xmean_prev = solutions._xmean;
+//    solutions._xmean = xmean;
+
+    solutions._cov  = solutions._A*solutions._A.transpose();
+
+
   }
 
   // TODO fix this with the right template
-  template CMAES_EXPORT void ConstrainedCovarianceUpdate::update(const CMAParameters<GenoPheno<NoBoundStrategy> >&,Eigen::EigenMultivariateNormal<double>&,CMASolutions&);
+//  template CMAES_EXPORT void ConstrainedCovarianceUpdate::update(const CMAParameters<GenoPheno<NoBoundStrategy> >&,Eigen::EigenMultivariateNormal<double>&,CMASolutions&);
   template CMAES_EXPORT void ConstrainedCovarianceUpdate::update(const CMAParameters<GenoPheno<pwqBoundStrategy> >&,Eigen::EigenMultivariateNormal<double>&,CMASolutions&);
-  template CMAES_EXPORT void ConstrainedCovarianceUpdate::update(const CMAParameters<GenoPheno<NoBoundStrategy,linScalingStrategy> >&,Eigen::EigenMultivariateNormal<double>&,CMASolutions&);
+//  template CMAES_EXPORT void ConstrainedCovarianceUpdate::update(const CMAParameters<GenoPheno<NoBoundStrategy,linScalingStrategy> >&,Eigen::EigenMultivariateNormal<double>&,CMASolutions&);
   template CMAES_EXPORT void ConstrainedCovarianceUpdate::update(const CMAParameters<GenoPheno<pwqBoundStrategy,linScalingStrategy> >&,Eigen::EigenMultivariateNormal<double>&,CMASolutions&);
 }

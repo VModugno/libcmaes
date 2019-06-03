@@ -41,7 +41,7 @@ namespace libcmaes
                     {TOLHISTFUN,"[Success] The optimization has converged"},
                     {EQUALFUNVALS,"[Partial Success] The objective function values are the same over too many iterations, check the formulation of your objective function"},
                     {TOLX,"[Partial Success] All components of covariance matrix are very small (e.g. < 1e-12)"},
-                    {TOLUPSIGMA,"[Error] Mismatch between step size increase and decrease of all eigenvalues in covariance matrix. Try to restart the optimization."},
+                    {TOLUPSIGMA,"[Error] Step size eigen value mismatch"},
                     {STAGNATION,"[Partial Success] Median of newest values is not smaller than the median of older values"},
                     {CONDITIONCOV,"[Error] The covariance matrix's condition number exceeds 1e14. Check out the formulation of your problem"},
                     {NOEFFECTAXIS,"[Partial Success] Mean remains constant along search axes"},
@@ -248,6 +248,7 @@ namespace libcmaes
 	return NOEFFECTCOOR;
       };
     _scriteria.insert(std::pair<int,StopCriteria<TGenoPheno> >(NOEFFECTCOOR,StopCriteria<TGenoPheno>(noEffectCoor)));
+//    set_criteria_active(-13,false);
   }
 
   template <class TGenoPheno>
@@ -261,8 +262,9 @@ namespace libcmaes
 #ifdef HAVE_DEBUG
     std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
 #endif
-    if (!_active)
+    if (!_active){
       return 0;
+    }
     int r = 0;
     for (auto imap : _scriteria)
       {
