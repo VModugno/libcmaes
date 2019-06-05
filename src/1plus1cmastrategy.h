@@ -57,7 +57,7 @@ namespace libcmaes
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
        */
-      OnePlusOneCMAStrategy(ConstrFitFunc &func,CMAParameters<TGenoPheno> &parameters);
+      OnePlusOneCMAStrategy(ConstrFitFunc &func,CMAParameters<TGenoPheno> &parameters,int num_constraints);
 
       /**
        * \brief constructor for starting from an existing solution.
@@ -67,7 +67,7 @@ namespace libcmaes
        */
       OnePlusOneCMAStrategy(ConstrFitFunc &func,
 		                    CMAParameters<TGenoPheno> &parameters,
-		                    const CMASolutions &cmasols);
+                            const CMASolutions &cmasols,int num_constraints);
 
       ~OnePlusOneCMAStrategy();
 

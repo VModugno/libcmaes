@@ -44,7 +44,7 @@ namespace libcmaes
 				    const dVec &y) const;
 
     void shift_into_feasible(const dVec &x, dVec &x_s) const;
-
+    dVec getRange() const {return _range;}
     double getLBound(const int &k) const { return _lbounds[k]; }
     double getUBound(const int &k) const { return _ubounds[k]; }
     double getPhenoLBound(const int &k) const { return _phenolbounds[k]; }
@@ -63,6 +63,7 @@ namespace libcmaes
   private:
     dVec _lbounds;
     dVec _ubounds;
+    dVec _range;
     dVec _al;
     dVec _au;
     dVec _xlow;

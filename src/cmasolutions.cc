@@ -85,6 +85,7 @@ namespace libcmaes
 
   CMASolutions::~CMASolutions()
   {
+      delete [] _constraints_violations;
   }
 
   void CMASolutions::update_best_candidates()
@@ -131,10 +132,11 @@ namespace libcmaes
   void CMASolutions::update_1plus1_sol_params(){
       _violated_constrained = false;
       _vci.clear();
-      for(int i=0;i<_constraints_violations.size();++i){
+      for(int i=0;i<2;++i){
           if(_constraints_violations[i]>0){
               _violated_constrained = true;
               _vci.push_back(i);
+//              std::cout<<"const viol "<<_constraints_violations[i]<<std::endl;
           }
       }
   }

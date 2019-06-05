@@ -42,6 +42,7 @@ namespace libcmaes
   {
     // init al & ul.
     dVec tmpdiff1 = _ubounds - _lbounds;
+    _range = tmpdiff1;
     dVec tmpdiff2 = 0.5*tmpdiff1;
     dVec tmpal = (1.0/20.0) * (dVec::Constant(dim,1.0) + _lbounds.cwiseAbs());
     _al = tmpdiff2.cwiseMin(tmpal);
@@ -62,6 +63,7 @@ namespace libcmaes
   {
     // init al & ul.
     dVec tmpdiff1 = _ubounds - _lbounds;
+    _range = tmpdiff1;
     dVec tmpdiff2 = 0.5*tmpdiff1;
     dVec tmpal = (1.0/20.0) * (dVec::Constant(dim,1.0) + _lbounds.cwiseAbs());
     _al = tmpdiff2.cwiseMin(tmpal);

@@ -38,15 +38,15 @@ FitFunc cigtab = [](const double *x, const int N)
 };
 
 
-ConstrFitFunc onePlusOneProb_g06 = [](const double *x, const int N, std::vector<double>& violation)
+ConstrFitFunc onePlusOneProbArr_g06 = [](const double *x, const int N, double* violation)
 {
     double fitness = pow((x[0]-10),3)+pow((x[1]-20),3);
     double constr1 = - pow((x[0]-5),2)- pow((x[1]-6),2) + 100;
     double constr2 = pow((x[0]-6),2) + pow((x[1]-5),2) -82.81;
-    violation.reserve(2);
     violation[0]=constr1;
     violation[1]=constr2;
-//    std::cout<<violation[0]<<"  "<<violation[1]<<std::endl;
+//    std::cout<<"x1: "<<x[0]<<" x2: "<<x[1]<<std::endl;
+//    std::cout<<violation[0]<<"  "<<violation[1]<<"    "<<fitness<<std::endl;
     return fitness;
 };
 
@@ -73,11 +73,11 @@ int main(int argc, char *argv[])
   double lbounds[dim],ubounds[dim];
   lbounds[0]=13;lbounds[1]=0;
   ubounds[0]=100;ubounds[1]=100;
-  std::vector<double> opePlusOne_x0 = {20.0,20.0};
+  std::vector<double> opePlusOne_x0 = {15.0,10.0};
   libcmaes:: GenoPheno<pwqBoundStrategy> gp(lbounds,ubounds,dim); // genotype / phenotype transform associated to bounds.
   CMAParameters<GenoPheno<pwqBoundStrategy>> onePlusOne_cmaparams(opePlusOne_x0,0.20,1,1,gp);
 //  CMAParameters<> onePlusOne_cmaparams(opePlusOne_x0,sigma,-1);
-  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>,CMAParameters<GenoPheno<pwqBoundStrategy>>> onePlusOneCmaes(onePlusOneProb_g06,onePlusOne_cmaparams);
+  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>,CMAParameters<GenoPheno<pwqBoundStrategy>>> onePlusOneCmaes(onePlusOneProbArr_g06,onePlusOne_cmaparams,2);
   onePlusOneCmaes.optimize();
 //  double edm1 = onePlusOneCmaes.constr_edm();
   std::cerr << "Solution  " <<onePlusOneCmaes.get_solutions().best_candidate().get_fvalue() << std::endl;

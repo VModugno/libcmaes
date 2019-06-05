@@ -67,7 +67,7 @@ namespace libcmaes
     if (parameters._maximize)
     {
         _constrfuncaux = _cfunc;
-        _cfunc = [&](const double *x, const int N, std::vector<double> & violations) { return -1.0*_constrfuncaux(x,N,violations); };
+        _cfunc = [&](const double *x, const int N, double* violations) { return -1.0*_constrfuncaux(x,N,violations); };
     }
     _pfunc = [](const TParameters&,const TSolutions&){return 0;}; // high level progress function does do anything.
     _solutions = TSolutions(_parameters);

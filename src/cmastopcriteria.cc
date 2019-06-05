@@ -249,6 +249,7 @@ namespace libcmaes
       };
     _scriteria.insert(std::pair<int,StopCriteria<TGenoPheno> >(NOEFFECTCOOR,StopCriteria<TGenoPheno>(noEffectCoor)));
 //    set_criteria_active(-13,false);
+    set_criteria_active(2,false);
   }
 
   template <class TGenoPheno>
