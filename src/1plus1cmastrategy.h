@@ -56,6 +56,7 @@ namespace libcmaes
        * \brief constructor.
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
+       * @param num_constraints number of inequality constraints
        */
       OnePlusOneCMAStrategy(ConstrFitFunc &func,CMAParameters<TGenoPheno> &parameters,int num_constraints);
 
@@ -63,6 +64,7 @@ namespace libcmaes
        * \brief constructor for starting from an existing solution.
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
+       * @param num_constraints number of inequality constraints
        * @param cmasols solution object to start from
        */
       OnePlusOneCMAStrategy(ConstrFitFunc &func,
@@ -137,6 +139,7 @@ namespace libcmaes
     public:
     static ProgressFunc<CMAParameters<TGenoPheno>,CMASolutions> _defaultPFunc; /**< the default progress function. */
     static PlotFunc<CMAParameters<TGenoPheno>,CMASolutions> _defaultFPFunc; /**< the default plot to file function. */
+    int _num_constraints; /**< number of inequality constraints. */
     };
 
 }

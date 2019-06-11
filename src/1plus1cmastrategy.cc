@@ -121,7 +121,7 @@ namespace libcmaes
 
      // initialize 0 mean and identity covariance for sampling
      dVec init_mean(eostrat<TGenoPheno>::_parameters._dim);
-     _esolver.setMean(init_mean);
+//     _esolver.setMean(init_mean);
      _esolver.setCovar(Eigen::MatrixXd::Identity(eostrat<TGenoPheno>::_parameters._dim,eostrat<TGenoPheno>::_parameters._dim));
 
      // initialize _A matrix using range
@@ -131,9 +131,10 @@ namespace libcmaes
          init_mean(i)= 0.0;
          stdev(i,i) = range(i)*range(i);
      }
+     _esolver.setMean(init_mean);
      Eigen::LLT<Eigen::MatrixXd> lltOfA(stdev);
      eostrat<TGenoPheno>::_solutions._A = lltOfA.matrixL();
-
+    _num_constraints = num_constraints;
      // initialize constraints_violation array with number of constraints
      eostrat<TGenoPheno>::_solutions._constraints_violations = new double [num_constraints];
 
@@ -174,9 +175,27 @@ namespace libcmaes
     // sampling from current distribution
     dVec pop_unbounded;
     eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1.0);
+//    %     z = [1.5976 -0.4918];
+//    eostrat<TGenoPheno>::_solutions._z(0) = 1.5976;
+//    eostrat<TGenoPheno>::_solutions._z(1) = -0.4918;
     pop_unbounded                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
     dVec pop = pop_unbounded;
-    eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().to_f_representation(pop_unbounded,pop);
+//    eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().shift_into_feasible(pop_unbounded,pop);
+
+    for (int i=0;i<pop_unbounded.size();++i ){
+        double lb =eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().getLBound(i);
+        double ub =eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().getUBound(i);
+        if (pop_unbounded(i) < lb  ){
+            pop(i) = lb;
+        }
+        else if (pop_unbounded(i) > ub){
+            pop(i) = ub;
+        }
+    }
+    std::cout<<"offspring___"<<pop<<std::endl;
+
+    std::cout<<"A______"<<eostrat<TGenoPheno>::_solutions._A<<std::endl;
+//    eostrat<TGenoPheno>::_parameters.get_gp().get_
 
     // if some parameters are fixed, reset them.
     if (!eostrat<TGenoPheno>::_parameters._fixed_p.empty())
@@ -215,6 +234,7 @@ namespace libcmaes
         }
 //      std::cerr << "candidate x: " << *(candidates.col(r).data()+1) << std::endl;
       }
+//      std::cout<<"constr vio: "<<*(eostrat<TGenoPheno>::_solutions._constraints_violations+1)<<std::endl;
       int nfcalls = candidates.cols();
       eostrat<TGenoPheno>::update_fevals(nfcalls);
 	  #ifdef HAVE_DEBUG
@@ -246,13 +266,14 @@ namespace libcmaes
 
     // CMA-ES update, depends on the selected 'flavor'.
 //    eostrat<TGenoPheno>::_parameters._constraints_on = true;
-    eostrat<TGenoPheno>::_solutions.update_1plus1_sol_params();
-    eostrat<TGenoPheno>::_solutions.update_best_candidates();
+
     if(eostrat<TGenoPheno>::_solutions._constraints_violations !=NULL){
         eostrat<TGenoPheno>::_parameters._constraints_on = true;
     }
     else
         eostrat<TGenoPheno>::_parameters._constraints_on = false;
+    eostrat<TGenoPheno>::_solutions.update_1plus1_sol_params(_num_constraints);
+    eostrat<TGenoPheno>::_solutions.update_best_candidates();
 
     TCovarianceUpdate::update(eostrat<TGenoPheno>::_parameters,_esolver,eostrat<TGenoPheno>::_solutions);
     eostrat<TGenoPheno>::_solutions.update_eigenv(_esolver._eigenSolver.eigenvalues(),_esolver._eigenSolver.eigenvectors());

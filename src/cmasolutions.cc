@@ -129,11 +129,13 @@ namespace libcmaes
       }
   }
 
-  void CMASolutions::update_1plus1_sol_params(){
+  void CMASolutions::update_1plus1_sol_params(int num_constraints){
       _violated_constrained = false;
       _vci.clear();
-      for(int i=0;i<2;++i){
-          if(_constraints_violations[i]>0){
+//      std::cout<<_constraints_violations[0]<<std::endl;
+//      std::cout<<_constraints_violations[1]<<std::endl;
+      for(int i=0;i<num_constraints;++i){
+          if((_constraints_violations[i])>0){
               _violated_constrained = true;
               _vci.push_back(i);
 //              std::cout<<"const viol "<<_constraints_violations[i]<<std::endl;

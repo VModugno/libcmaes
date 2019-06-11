@@ -88,8 +88,11 @@ namespace libcmaes
      */
     void update_best_candidates();
 
-
-    void update_1plus1_sol_params();
+    /**
+     * \brief updates parameters for (1+1)Cma-ES
+     * \params num constraints
+     */
+    void update_1plus1_sol_params(int num_constraints);
 
     /**
      * \brief updates reference eigenvalue and eigenvectors, for use in 

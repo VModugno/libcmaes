@@ -40,6 +40,8 @@ namespace libcmaes
 		 int jj     = 0;
 		 dMat w     = dMat::Zero(solutions._vci.size(),parameters._dim);
 		 dMat value = dMat::Zero(solutions._A.rows(),solutions._A.cols());
+         dMat val1;
+         double val2;
 		 for(unsigned int j = 0;j<solutions._vci.size();j++){
 			 jj = solutions._vci[j];
 			 //update exponentially fading record vj
@@ -48,9 +50,9 @@ namespace libcmaes
 			 // w(index,:) = (A{k}^(-1)*v(j,:)')';
              w.row(index).array() = solutions._A.inverse()*solutions._vc.row(jj).transpose();
 			 // value = value +  (v(j,:)'*w(index,:))/(w(index,:)*w(index,:)');
-             dMat val1 = solutions._vc.row(jj).transpose()*w.row(index);
-			 dMat val2 = w.row(index).transpose()*w.row(index);
-			 value = value + val1*(val2.inverse());
+             val1 = solutions._vc.row(jj).transpose()*w.row(index);
+             val2 = w.row(index)*w.row(index).transpose();
+             value = value + val1/(val2);
 			 //
 			 index = index + 1;
 		 }
