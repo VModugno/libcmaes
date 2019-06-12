@@ -62,14 +62,14 @@ namespace libcmaes
 		 solutions._performances.push_back(solutions._performances.back());
 	}
 	else{  // all the constraints are satisfied
-        if(solutions._candidates[0].get_fvalue() > solutions._performances.back())
+        if(solutions._candidates[0].get_fvalue() < solutions._performances.back())
 			solutions._Psucc = (1- parameters._c_p)*solutions._Psucc + parameters._c_p;
 		else
 			solutions._Psucc = (1-parameters._c_p)*solutions._Psucc;
 		// update sigma, sigma(k+1) = sigma(k)*exp( (1/d) * (P_succ - P_target) / (1-P_target) );
 		solutions._sigma = solutions._sigma*std::exp( (1/parameters._d) * (solutions._Psucc - parameters._P_target) / (1-parameters._P_target) );
 
-        if(solutions._candidates[0].get_fvalue() > solutions._performances.back()){ // performance is better
+        if(solutions._candidates[0].get_fvalue() < solutions._performances.back()){ // performance is better
 			//no update v
 			dMat w     = dVec::Zero(parameters._dim);
 			// update mean
@@ -87,6 +87,7 @@ namespace libcmaes
 //            dMat A3 =
 //            solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
             solutions._A = A1 + A2;
+            std::cout<<"test"<<std::endl;
 		 }
 		 else{ // performance is worse
 			 // no update mean
@@ -95,18 +96,21 @@ namespace libcmaes
 			 // update performance with the last best value
 			 solutions._performances.push_back(solutions._performances.back());
 			 if(solutions._niter>5){
-                if(solutions._candidates[0].get_fvalue() > solutions._performances[solutions._niter-5]){ // performance is worse but better than the last fifth predecessor
+                if(solutions._candidates[0].get_fvalue() < solutions._performances[solutions._niter-5]){ // performance is worse but better than the last fifth predecessor
 			       // update A, A{k+1} = sqrt(1 + c_cov_minus)*A{k} + ( sqrt(1 + c_cov_minus)/norm(z)^2 )*( sqrt(1 - (c_cov_minus*norm(z)^2)/(1 + c_cov_minus)) - 1 )*A{k}*(z'*z)
                     dMat A_1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
                     dMat A_2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )*( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )*solutions._A*(solutions._z.transpose()*solutions._z);
                     solutions._A = A_1  + A_2 ;
+                    std::cout<<"test"<<std::endl;
                 }
 			    else{
 			     // A no update covariance
+                    std::cout<<"test"<<std::endl;
 			    }
 			 }
 			 else{
 				 // A no update covariance
+                 std::cout<<"test"<<std::endl;
 			 }
 
 		 }

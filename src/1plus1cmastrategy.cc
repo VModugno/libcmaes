@@ -135,6 +135,7 @@ namespace libcmaes
      Eigen::LLT<Eigen::MatrixXd> lltOfA(stdev);
      eostrat<TGenoPheno>::_solutions._A = lltOfA.matrixL();
     _num_constraints = num_constraints;
+    eostrat<TGenoPheno>::_solutions._num_constraints = num_constraints;
      // initialize constraints_violation array with number of constraints
      eostrat<TGenoPheno>::_solutions._constraints_violations = new double [num_constraints];
 
@@ -272,10 +273,12 @@ namespace libcmaes
     }
     else
         eostrat<TGenoPheno>::_parameters._constraints_on = false;
-    eostrat<TGenoPheno>::_solutions.update_1plus1_sol_params(_num_constraints);
-    eostrat<TGenoPheno>::_solutions.update_best_candidates();
 
+    eostrat<TGenoPheno>::_solutions.update_best_candidates();
+    eostrat<TGenoPheno>::_solutions.update_1plus1_sol_params(_num_constraints);
     TCovarianceUpdate::update(eostrat<TGenoPheno>::_parameters,_esolver,eostrat<TGenoPheno>::_solutions);
+
+
     eostrat<TGenoPheno>::_solutions.update_eigenv(_esolver._eigenSolver.eigenvalues(),_esolver._eigenSolver.eigenvectors());
 
 #ifdef HAVE_DEBUG

@@ -120,7 +120,7 @@ namespace libcmaes
     this->_cs          = 2.0/(Parameters<TGenoPheno>::_dim + 2);
     this->_c_p         = 1.0/12;
     this->_d           = 1.0 + Parameters<TGenoPheno>::_dim/2;
-    this->_P_target    = 2.0/11;
+    this->_P_target    = 2.0/12;
     this->_c_cov_plus  = 2.0/(pow(Parameters<TGenoPheno>::_dim,2) + 6);
     this->_c_cov_minus = 0.4/(pow(Parameters<TGenoPheno>::_dim,1.6) + 1);
     this->_c_constr    = 1.0/(Parameters<TGenoPheno>::_dim + 2);

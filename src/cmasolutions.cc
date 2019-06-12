@@ -134,12 +134,19 @@ namespace libcmaes
       _vci.clear();
 //      std::cout<<_constraints_violations[0]<<std::endl;
 //      std::cout<<_constraints_violations[1]<<std::endl;
+//      double test0 = _constraints_violations[0];
+//      double test = _constraints_violations[1];
       for(int i=0;i<num_constraints;++i){
-          if((_constraints_violations[i])>0){
+          double testVal = _constraints_violations[i];
+          if(testVal > -0.00){
               _violated_constrained = true;
               _vci.push_back(i);
 //              std::cout<<"const viol "<<_constraints_violations[i]<<std::endl;
           }
+
+      }
+      if (!_violated_constrained){
+          std::cout<<"test"<<std::endl;
       }
   }
 
