@@ -58,7 +58,9 @@ namespace libcmaes
        * @param parameters stochastic search parameters
        * @param num_constraints number of inequality constraints
        */
-      OnePlusOneCMAStrategy(ConstrFitFunc &func,CMAParameters<TGenoPheno> &parameters,int num_constraints);
+      OnePlusOneCMAStrategy(ConstrFitFunc &func,
+                            CMAParameters<TGenoPheno> &parameters,
+                            int num_constraints);
 
       /**
        * \brief constructor for starting from an existing solution.

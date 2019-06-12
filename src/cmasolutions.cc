@@ -137,13 +137,11 @@ namespace libcmaes
           if(testVal > -0.00){
               _violated_constrained = true;
               _vci.push_back(i);
-//              std::cout<<"const viol "<<_constraints_violations[i]<<std::endl;
           }
 
       }
-      if (!_violated_constrained){
-//          std::cout<<"test"<<std::endl;
-      }
+//      if (!_violated_constrained){
+//      }
   }
 
   dMat CMASolutions::full_cov() const

@@ -44,8 +44,8 @@ namespace libcmaes
          double val2;
 		 for(unsigned int j = 0;j<solutions._vci.size();j++){
 			 jj = solutions._vci[j];
-			 //update exponentially fading record vj
-//             if (j==0){solutions._vc.row(jj).array()=0;}
+             // update exponentially fading record vj
+             // if (j==0){solutions._vc.row(jj).array()=0;}
 			 solutions._vc.row(jj).array() = (1-parameters._c_constr)*solutions._vc.row(jj) + parameters._c_constr*((solutions._A*solutions._z).transpose());
 			 // w(index,:) = (A{k}^(-1)*v(j,:)')';
              w.row(index).array() = solutions._A.inverse()*solutions._vc.row(jj).transpose();
@@ -53,7 +53,6 @@ namespace libcmaes
              val1 = solutions._vc.row(jj).transpose()*w.row(index);
              val2 = w.row(index)*w.row(index).transpose();
              value = value + val1/(val2);
-			 //
 			 index = index + 1;
 		 }
 		 //update A if constraint violation is true
@@ -83,13 +82,13 @@ namespace libcmaes
 
 			// update A, A{k+1} = sqrt(1 - c_cov_plus)*A{k} + ( sqrt(1-c_cov_plus)/norm(w)^2 )*(sqrt(1 + (c_cov_plus*norm(w)^2)/(1-c_cov_plus) ) - 1 )*s(k+1,:)'*w
             dMat A1 = sqrt(1 - parameters._c_cov_plus)*solutions._A;
-            dMat A2 = ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() )* (sqrt(1 + (parameters._c_cov_plus*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc*w.transpose());
-//            dMat A3 =
-//            solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
+            dMat A2 = ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() )* (sqrt(1 + (parameters._c_cov_plus*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )
+                    * (solutions._pc*w.transpose());
+            // solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
             solutions._A = A1 + A2;
-//            std::cout<<"test"<<std::endl;
 		 }
-		 else{ // performance is worse
+         else{
+             // performance is worse
 			 // no update mean
 			 // no update s ( or as is defined here pc)
 			 // no update vc
@@ -98,19 +97,18 @@ namespace libcmaes
 			 if(solutions._niter>5){
                 if(solutions._candidates[0].get_fvalue() < solutions._performances[solutions._niter-5]){ // performance is worse but better than the last fifth predecessor
 			       // update A, A{k+1} = sqrt(1 + c_cov_minus)*A{k} + ( sqrt(1 + c_cov_minus)/norm(z)^2 )*( sqrt(1 - (c_cov_minus*norm(z)^2)/(1 + c_cov_minus)) - 1 )*A{k}*(z'*z)
-                    dMat A_1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
-                    dMat A_2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )*( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )*solutions._A*(solutions._z.transpose()*solutions._z);
-                    solutions._A = A_1  + A_2 ;
-//                    std::cout<<"test"<<std::endl;
+                    dMat A1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
+                    dMat A2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )
+                            *( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )
+                            *solutions._A*(solutions._z.transpose()*solutions._z);
+                    solutions._A = A1  + A2 ;
                 }
 			    else{
 			     // A no update covariance
-//                    std::cout<<"test"<<std::endl;
 			    }
 			 }
 			 else{
 				 // A no update covariance
-//                 std::cout<<"test"<<std::endl;
 			 }
 
 		 }
@@ -118,8 +116,6 @@ namespace libcmaes
 	}
 
     solutions._cov  = solutions._A*solutions._A.transpose();
-
-
   }
 
   // TODO fix this with the right template

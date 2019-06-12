@@ -176,13 +176,9 @@ namespace libcmaes
     // sampling from current distribution
     dVec pop_unbounded;
     eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1.0);
-//    %     z = [1.5976 -0.4918];
-//    eostrat<TGenoPheno>::_solutions._z(0) = 1.5976;
-//    eostrat<TGenoPheno>::_solutions._z(1) = -0.4918;
     pop_unbounded                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
     dVec pop = pop_unbounded;
-//    eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().shift_into_feasible(pop_unbounded,pop);
-
+    // checking bounds
     for (int i=0;i<pop_unbounded.size();++i ){
         double lb =eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().getLBound(i);
         double ub =eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().getUBound(i);
@@ -193,10 +189,6 @@ namespace libcmaes
             pop(i) = ub;
         }
     }
-//    std::cout<<"offspring___"<<pop<<std::endl;
-
-//    std::cout<<"A______"<<eostrat<TGenoPheno>::_solutions._A<<std::endl;
-//    eostrat<TGenoPheno>::_parameters.get_gp().get_
 
     // if some parameters are fixed, reset them.
     if (!eostrat<TGenoPheno>::_parameters._fixed_p.empty())
@@ -230,12 +222,8 @@ namespace libcmaes
             eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(phenocandidates.col(r).data(),candidates.rows(),eostrat<TGenoPheno>::_solutions._constraints_violations));
         else{
             eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(candidates.col(r).data(),candidates.rows(),eostrat<TGenoPheno>::_solutions._constraints_violations));
-//            eostrat<TGenoPheno>::_solutions._candidates.at(r).set_fvalue(eostrat<TGenoPheno>::_cfunc(candidates.col(r).data(),candidates.rows(),eostrat<TGenoPheno>::_solutions._constraints_violations));
-
         }
-//      std::cerr << "candidate x: " << *(candidates.col(r).data()+1) << std::endl;
       }
-//      std::cout<<"constr vio: "<<*(eostrat<TGenoPheno>::_solutions._constraints_violations+1)<<std::endl;
       int nfcalls = candidates.cols();
       eostrat<TGenoPheno>::update_fevals(nfcalls);
 	  #ifdef HAVE_DEBUG
@@ -306,7 +294,8 @@ namespace libcmaes
     }
     eostrat<TGenoPheno>::_solutions._run_status = _stopcriteria.stop(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions);
     if ((eostrat<TGenoPheno>::_solutions._run_status) != CONT){
-        std::cout<<"Status 1+1: "<<eostrat<TGenoPheno>::_solutions._run_status<<std::endl;
+        std::cout<<"Check cmastopcriteria.h for details on exit status"<<std::endl;
+        std::cout<<"1+1CMAES Current Exit status: "<<eostrat<TGenoPheno>::_solutions._run_status<<std::endl;
         return true;
     }
     else return false;
