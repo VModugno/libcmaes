@@ -87,7 +87,7 @@ namespace libcmaes
 //            dMat A3 =
 //            solutions._A = sqrt(1 - parameters._c_cov_plus)*solutions._A + ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() ) * (sqrt(1 + (parameters._c1*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )* (solutions._pc.transpose()*w);
             solutions._A = A1 + A2;
-            std::cout<<"test"<<std::endl;
+//            std::cout<<"test"<<std::endl;
 		 }
 		 else{ // performance is worse
 			 // no update mean
@@ -101,16 +101,16 @@ namespace libcmaes
                     dMat A_1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
                     dMat A_2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )*( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )*solutions._A*(solutions._z.transpose()*solutions._z);
                     solutions._A = A_1  + A_2 ;
-                    std::cout<<"test"<<std::endl;
+//                    std::cout<<"test"<<std::endl;
                 }
 			    else{
 			     // A no update covariance
-                    std::cout<<"test"<<std::endl;
+//                    std::cout<<"test"<<std::endl;
 			    }
 			 }
 			 else{
 				 // A no update covariance
-                 std::cout<<"test"<<std::endl;
+//                 std::cout<<"test"<<std::endl;
 			 }
 
 		 }

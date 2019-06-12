@@ -132,10 +132,6 @@ namespace libcmaes
   void CMASolutions::update_1plus1_sol_params(int num_constraints){
       _violated_constrained = false;
       _vci.clear();
-//      std::cout<<_constraints_violations[0]<<std::endl;
-//      std::cout<<_constraints_violations[1]<<std::endl;
-//      double test0 = _constraints_violations[0];
-//      double test = _constraints_violations[1];
       for(int i=0;i<num_constraints;++i){
           double testVal = _constraints_violations[i];
           if(testVal > -0.00){
@@ -146,7 +142,7 @@ namespace libcmaes
 
       }
       if (!_violated_constrained){
-          std::cout<<"test"<<std::endl;
+//          std::cout<<"test"<<std::endl;
       }
   }
 

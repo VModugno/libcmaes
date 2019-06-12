@@ -193,9 +193,9 @@ namespace libcmaes
             pop(i) = ub;
         }
     }
-    std::cout<<"offspring___"<<pop<<std::endl;
+//    std::cout<<"offspring___"<<pop<<std::endl;
 
-    std::cout<<"A______"<<eostrat<TGenoPheno>::_solutions._A<<std::endl;
+//    std::cout<<"A______"<<eostrat<TGenoPheno>::_solutions._A<<std::endl;
 //    eostrat<TGenoPheno>::_parameters.get_gp().get_
 
     // if some parameters are fixed, reset them.
