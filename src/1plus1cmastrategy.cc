@@ -175,9 +175,11 @@ namespace libcmaes
 
     // sampling from current distribution
     dVec pop_unbounded;
+
     eostrat<TGenoPheno>::_solutions._z = _esolver.samples(1,1.0);
     pop_unbounded                                = eostrat<TGenoPheno>::_solutions._xmean + eostrat<TGenoPheno>::_solutions._sigma*eostrat<TGenoPheno>::_solutions._A*eostrat<TGenoPheno>::_solutions._z; // Eq. (1)
     dVec pop = pop_unbounded;
+
     // checking bounds
     for (int i=0;i<pop_unbounded.size();++i ){
         double lb =eostrat<TGenoPheno>::_parameters.get_gp().get_boundstrategy().getLBound(i);

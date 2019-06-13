@@ -117,18 +117,18 @@ int main(int argc, char *argv[])
   int seed = 0;
 
 //// 1+1cmaes paper problem g06
-  int dim_g06  = 2;
-  double lbounds_g06[dim_g06] = {13.0,0.0};
-  double ubounds_g06[dim_g06] = {100.0, 100.0};
-  std::vector<double> opePlusOne_g06_x0 = {14.6111,2.1491};
-  libcmaes:: GenoPheno<pwqBoundStrategy> gp_g06(lbounds_g06,ubounds_g06,dim_g06); // genotype / phenotype transform associated to bounds.
-  CMAParameters<GenoPheno<pwqBoundStrategy>> onePlusOne_cmaparams_g06(opePlusOne_g06_x0,sigma,lambda,seed,gp_g06);
-  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>,CMAParameters<GenoPheno<pwqBoundStrategy>>> onePlusOneCmaes_g06(onePlusOneProb_g06,onePlusOne_cmaparams_g06,2);
-  onePlusOneCmaes_g06.optimize();
-  std::cerr << "Solution  " <<onePlusOneCmaes_g06.get_solutions().best_candidate().get_fvalue() << std::endl;
+//  const int dim_g06  = 2;
+//  double lbounds_g06[dim_g06] = {13.0,0.0};
+//  double ubounds_g06[dim_g06] = {100.0, 100.0};
+//  std::vector<double> opePlusOne_g06_x0 = {14.6111,2.1491};
+//  libcmaes:: GenoPheno<pwqBoundStrategy> gp_g06(lbounds_g06,ubounds_g06,dim_g06); // genotype / phenotype transform associated to bounds.
+//  CMAParameters<GenoPheno<pwqBoundStrategy>> onePlusOne_cmaparams_g06(opePlusOne_g06_x0,sigma,lambda,seed,gp_g06);
+//  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>,CMAParameters<GenoPheno<pwqBoundStrategy>>> onePlusOneCmaes_g06(onePlusOneProb_g06,onePlusOne_cmaparams_g06,2);
+//  onePlusOneCmaes_g06.optimize();
+//  std::cerr << "Solution  " <<onePlusOneCmaes_g06.get_solutions().best_candidate().get_fvalue() << std::endl;
 
 //// 1+1cmaes paper problem tr2
-//  int dim_tr2 = 2;
+//  const int dim_tr2 = 2;
 //  double lbounds_tr2[dim_tr2] = {0.0,0.0};
 //  double ubounds_tr2[dim_tr2] = {100.0, 100.0};
 //  std::vector<double> opePlusOne_tr2_x0 = {50,50};
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 //  std::cerr << "Solution  " <<onePlusOneCmaes_tr2.get_solutions().best_candidate().get_fvalue() << std::endl;
 
 //// 1+1cmaes paper problem g07
-//  int dim_g07 = 10;
+//  const int dim_g07 = 10;
 //  double lbounds_g07[dim_g07] = {-10,-10,-10,-10,-10,-10,-10,-10,-10,-10};
 //  double ubounds_g07[dim_g07] = {10,10,10,10,10,10,10,10,10,10};
 //  std::vector<double> opePlusOne_g07_x0 = {2.0,2.0,8.0,5.0,1,2.0,2.0,9.0,8.0,8.0};
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
 //  std::cerr << "Solution  " <<onePlusOneCmaes_g07.get_solutions().best_candidate().get_fvalue() << std::endl;
 
 //// 1+1cmaes paper problem g09
-//  int dim_g09 = 7;
+//  const int dim_g09 = 7;
 //  double lbounds_g09[dim_g09] = {-10,-10,-10,-10,-10,-10,-10};
 //  double ubounds_g09[dim_g09] = {10,10,10,10,10,10,10};
 //  std::vector<double> opePlusOne_g09_x0 = {0,0,0,0,0,0,0};
@@ -161,23 +161,15 @@ int main(int argc, char *argv[])
 //  std::cerr << "Solution  " <<onePlusOneCmaes_g09.get_solutions().best_candidate().get_fvalue() << std::endl;
 
 //// 1+1cmaes paper problem g10
-//  double avg_fitness = 0;
-//  for(int i=0;i<45;++i){
-//  int dim_g10 = 8;
-//  double lbounds_g10[dim_g10] = {100,1000,1000,10,10,10,10,10};
-//  double ubounds_g10[dim_g10] = {10000,10000,10000,1000,1000,1000,1000,1000};
-//  std::vector<double> opePlusOne_g10_x0 = {600,2000,5000,200,200,200,200,400};
-//  libcmaes:: GenoPheno<pwqBoundStrategy> gp_g10(lbounds_g10,ubounds_g10,dim_g10);
-//  CMAParameters<GenoPheno<pwqBoundStrategy>> onePlusOne_cmaparams_g10(opePlusOne_g10_x0,0.4,lambda,seed,gp_g10);
-//  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>,CMAParameters<GenoPheno<pwqBoundStrategy>>> onePlusOneCmaes_g10(onePlusOneProb_g10,onePlusOne_cmaparams_g10,6);
-//  onePlusOneCmaes_g10.optimize();
-//  std::cerr << i<<"  Solution  " <<onePlusOneCmaes_g10.get_solutions().best_candidate().get_fvalue() << std::endl;
-//  avg_fitness = avg_fitness + onePlusOneCmaes_g10.get_solutions().best_candidate().get_fvalue();
-//  }
-//  std::cout<<"avg_score "<<avg_fitness/45.0<<std::endl;
-
-
-//  std::cerr << "Solution  " <<onePlusOneCmaes_g10.get_solutions().best_candidate().get_fvalue() << std::endl;
+  const int dim_g10 = 8;
+  double lbounds_g10[dim_g10] = {100,1000,1000,10,10,10,10,10};
+  double ubounds_g10[dim_g10] = {10000,10000,10000,1000,1000,1000,1000,1000};
+  std::vector<double> opePlusOne_g10_x0 = {600,2000,5000,200,200,200,200,400};
+  libcmaes:: GenoPheno<pwqBoundStrategy> gp_g10(lbounds_g10,ubounds_g10,dim_g10);
+  CMAParameters<GenoPheno<pwqBoundStrategy>> onePlusOne_cmaparams_g10(opePlusOne_g10_x0,sigma,lambda,seed,gp_g10);
+  ESOptimizer<OnePlusOneCMAStrategy<ConstrainedCovarianceUpdate,GenoPheno<pwqBoundStrategy>>,CMAParameters<GenoPheno<pwqBoundStrategy>>> onePlusOneCmaes_g10(onePlusOneProb_g10,onePlusOne_cmaparams_g10,6);
+  onePlusOneCmaes_g10.optimize();
+  std::cerr << "Solution  " <<onePlusOneCmaes_g10.get_solutions().best_candidate().get_fvalue() << std::endl;
 
 
 

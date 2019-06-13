@@ -31,7 +31,6 @@ namespace libcmaes
 				                           CMASolutions &solutions)
   {
 	// some constraints are violated and constraints evaluation is active
-
 	if(solutions._violated_constrained && parameters._constraints_on){
 		 //no update mean
 		 //no update s ( or as is defined here pc)
@@ -40,7 +39,7 @@ namespace libcmaes
 		 int jj     = 0;
 		 dMat w     = dMat::Zero(solutions._vci.size(),parameters._dim);
 		 dMat value = dMat::Zero(solutions._A.rows(),solutions._A.cols());
-         dMat val1;
+         dMat val1;         
          double val2;
 		 for(unsigned int j = 0;j<solutions._vci.size();j++){
 			 jj = solutions._vci[j];
@@ -53,9 +52,11 @@ namespace libcmaes
              val1 = solutions._vc.row(jj).transpose()*w.row(index);
              val2 = w.row(index)*w.row(index).transpose();
              value = value + val1/(val2);
+//             value = value + val_1*(val_2.inverse());
 			 index = index + 1;
 		 }
 		 //update A if constraint violation is true
+         // Eq(7)
 		 solutions._A = solutions._A - parameters._beta/solutions._vci.size() * value;
 		 // update performance with the last best value
 		 solutions._performances.push_back(solutions._performances.back());
@@ -81,6 +82,7 @@ namespace libcmaes
 			w = solutions._A.inverse()*solutions._pc;
 
 			// update A, A{k+1} = sqrt(1 - c_cov_plus)*A{k} + ( sqrt(1-c_cov_plus)/norm(w)^2 )*(sqrt(1 + (c_cov_plus*norm(w)^2)/(1-c_cov_plus) ) - 1 )*s(k+1,:)'*w
+            // Eq(3)
             dMat A1 = sqrt(1 - parameters._c_cov_plus)*solutions._A;
             dMat A2 = ( sqrt(1-parameters._c_cov_plus)/w.squaredNorm() )* (sqrt(1 + (parameters._c_cov_plus*w.squaredNorm())/(1-parameters._c_cov_plus) ) - 1 )
                     * (solutions._pc*w.transpose());
@@ -93,6 +95,7 @@ namespace libcmaes
 			 // no update s ( or as is defined here pc)
 			 // no update vc
 			 // update performance with the last best value
+            // Eq(5)
 			 solutions._performances.push_back(solutions._performances.back());
 			 if(solutions._niter>5){
                 if(solutions._candidates[0].get_fvalue() < solutions._performances[solutions._niter-5]){ // performance is worse but better than the last fifth predecessor
@@ -100,7 +103,7 @@ namespace libcmaes
                     dMat A1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
                     dMat A2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )
                             *( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )
-                            *solutions._A*(solutions._z.transpose()*solutions._z);
+                            *(solutions._A*(solutions._z*solutions._z.transpose()));
                     solutions._A = A1  + A2 ;
                 }
 			    else{
@@ -114,6 +117,7 @@ namespace libcmaes
 		 }
 
 	}
+
 
     solutions._cov  = solutions._A*solutions._A.transpose();
   }
