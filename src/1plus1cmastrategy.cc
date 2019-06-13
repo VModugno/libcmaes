@@ -295,9 +295,14 @@ namespace libcmaes
       return false;
     }
     eostrat<TGenoPheno>::_solutions._run_status = _stopcriteria.stop(eostrat<TGenoPheno>::_parameters,eostrat<TGenoPheno>::_solutions);
-    if ((eostrat<TGenoPheno>::_solutions._run_status) != CONT){
+    int run_status = eostrat<TGenoPheno>::_solutions._run_status;
+    if (run_status != CONT){
         std::cout<<"Check cmastopcriteria.h for details on exit status"<<std::endl;
-        std::cout<<"1+1CMAES Current Exit status: "<<eostrat<TGenoPheno>::_solutions._run_status<<std::endl;
+        std::cout<<"1+1CMAES Current Exit status: "<<run_status<<std::endl;
+        if (run_status != 7 && run_status != 1 && run_status != 10){
+            std::cout<<"Chage seed and retry"<<std::endl;
+        }
+
         return true;
     }
     else return false;
