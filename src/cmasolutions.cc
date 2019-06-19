@@ -129,7 +129,9 @@ namespace libcmaes
       }
   }
 
-  void CMASolutions::update_1plus1_sol_params(int num_constraints){
+  // todo
+  // to move into 1+1 cmaes eval function (moved)
+  /*void CMASolutions::update_1plus1_sol_params(int num_constraints){
       _violated_constrained = false;
       _vci.clear();
       for(int i=0;i<num_constraints;++i){
@@ -142,7 +144,7 @@ namespace libcmaes
       }
 //      if (!_violated_constrained){
 //      }
-  }
+  }*/
 
   dMat CMASolutions::full_cov() const
   {

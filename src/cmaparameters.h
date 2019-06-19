@@ -66,7 +66,9 @@ namespace libcmaes
 		    const double &sigma,
 		    const int &lambda=-1,
 		    const uint64_t &seed=0,
-		    const TGenoPheno &gp=TGenoPheno());
+		    const TGenoPheno &gp=TGenoPheno(),
+			bool constraints_on=false,
+			int N_constr=0);
       
       /**
        * \brief Constructor.
@@ -81,7 +83,9 @@ namespace libcmaes
 		    const double &sigma,
 		    const int &lambda=-1,
 		    const uint64_t &seed=0,
-		    const TGenoPheno &gp=TGenoPheno());
+		    const TGenoPheno &gp=TGenoPheno(),
+			bool constraints_on=false,
+			int N_constr=0);
       
       /**
        * \brief Constructor.
@@ -97,7 +101,9 @@ namespace libcmaes
 		    const int &lambda=-1,
 		    const std::vector<double> &lbounds=std::vector<double>(),
 		    const std::vector<double> &ubounds=std::vector<double>(),
-		    const uint64_t &seed=0);
+		    const uint64_t &seed=0,
+			bool constraints_on=false,
+			int N_constr=0);
       
       ~CMAParameters();
       

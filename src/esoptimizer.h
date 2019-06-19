@@ -96,8 +96,8 @@ namespace libcmaes
        */
 
       ESOptimizer(ConstrFitFunc &func,
-          TParameters &parameters,int num_constraints)
-    :TESOStrategy(func,parameters,num_constraints)
+          TParameters &parameters)
+    :TESOStrategy(func,parameters)
     {
     }
       
@@ -122,8 +122,8 @@ namespace libcmaes
        */
       ESOptimizer(ConstrFitFunc &func,
           TParameters &parameters,
-          const TSolutions &solution,int num_constraints)
-    :TESOStrategy(func,parameters,solution,num_constraints)
+          const TSolutions &solution)
+    :TESOStrategy(func,parameters,solution)
     {
     }
       

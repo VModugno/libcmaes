@@ -59,8 +59,7 @@ namespace libcmaes
        * @param num_constraints number of inequality constraints
        */
       OnePlusOneCMAStrategy(ConstrFitFunc &func,
-                            CMAParameters<TGenoPheno> &parameters,
-                            int num_constraints);
+                            CMAParameters<TGenoPheno> &parameters);
 
       /**
        * \brief constructor for starting from an existing solution.
@@ -71,7 +70,7 @@ namespace libcmaes
        */
       OnePlusOneCMAStrategy(ConstrFitFunc &func,
 		                    CMAParameters<TGenoPheno> &parameters,
-                            const CMASolutions &cmasols,int num_constraints);
+                            const CMASolutions &cmasols);
 
       ~OnePlusOneCMAStrategy();
 
@@ -141,7 +140,7 @@ namespace libcmaes
     public:
     static ProgressFunc<CMAParameters<TGenoPheno>,CMASolutions> _defaultPFunc; /**< the default progress function. */
     static PlotFunc<CMAParameters<TGenoPheno>,CMASolutions> _defaultFPFunc; /**< the default plot to file function. */
-    int _num_constraints; /**< number of inequality constraints. */
+    //int _num_constraints; /**< number of inequality constraints. */
     };
 
 }

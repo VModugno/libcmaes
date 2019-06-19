@@ -31,8 +31,10 @@ namespace libcmaes
 					   const double &sigma,
 					   const int &lambda,
 					   const uint64_t &seed,
-					   const TGenoPheno &gp)
-    :Parameters<TGenoPheno>(dim,x0,lambda,seed,gp),_sigma_init(sigma),_nrestarts(9),_lazy_update(false),_lazy_value(0),_cm(1.0),_alphacov(2.0),_alphaminusold(0.5),_lambdamintarget(0.66),_alphaminusmin(1.0)
+					   const TGenoPheno &gp,
+					   bool constraints_on,
+					   int N_constr)
+    :Parameters<TGenoPheno>(dim,x0,lambda,seed,gp,constraints_on,N_constr),_sigma_init(sigma),_nrestarts(9),_lazy_update(false),_lazy_value(0),_cm(1.0),_alphacov(2.0),_alphaminusold(0.5),_lambdamintarget(0.66),_alphaminusmin(1.0)
   {
     initialize_parameters();
   }
@@ -42,8 +44,10 @@ namespace libcmaes
 					   const double &sigma,
 					   const int &lambda,
 					   const uint64_t &seed,
-					   const TGenoPheno &gp)
-    :Parameters<TGenoPheno>(x0.size(),&x0.front(),lambda,seed,gp),_sigma_init(sigma),_nrestarts(9),_lazy_update(false),_lazy_value(0),_cm(1.0),_alphacov(2.0),_alphaminusold(0.5),_lambdamintarget(0.66),_alphaminusmin(1.0)
+					   const TGenoPheno &gp,
+					   bool constraints_on,
+					   int N_constr)
+    :Parameters<TGenoPheno>(x0.size(),&x0.front(),lambda,seed,gp,constraints_on,N_constr),_sigma_init(sigma),_nrestarts(9),_lazy_update(false),_lazy_value(0),_cm(1.0),_alphacov(2.0),_alphaminusold(0.5),_lambdamintarget(0.66),_alphaminusmin(1.0)
   {
     initialize_parameters();
   }
@@ -54,8 +58,10 @@ namespace libcmaes
 					   const int &lambda,
 					   const std::vector<double> &lbounds,
 					   const std::vector<double> &ubounds,
-					   const uint64_t &seed)
-    :Parameters<TGenoPheno>(x0.size(),&x0.front(),lambda,seed,TGenoPheno()),_nrestarts(9),_lazy_update(false),_lazy_value(0),_cm(1.0),_alphacov(2.0),_alphaminusold(0.5),_lambdamintarget(0.66),_alphaminusmin(1.0)
+					   const uint64_t &seed,
+					   bool constraints_on,
+					   int N_constr)
+    :Parameters<TGenoPheno>(x0.size(),&x0.front(),lambda,seed,TGenoPheno(),constraints_on,N_constr),_nrestarts(9),_lazy_update(false),_lazy_value(0),_cm(1.0),_alphacov(2.0),_alphaminusold(0.5),_lambdamintarget(0.66),_alphaminusmin(1.0)
   {
     dVec scaling = dVec::Constant(x0.size(),1.0).cwiseQuotient(Eigen::Map<dVec>(const_cast<double*>(&sigma.front()),sigma.size()));
     dVec shift = dVec::Constant(x0.size(),0.0);

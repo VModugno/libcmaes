@@ -92,7 +92,7 @@ namespace libcmaes
      * \brief updates parameters for (1+1)Cma-ES
      * \params num constraints
      */
-    void update_1plus1_sol_params(int num_constraints);
+    //void update_1plus1_sol_params(int num_constraints);
 
     /**
      * \brief updates reference eigenvalue and eigenvectors, for use in 
@@ -516,7 +516,7 @@ namespace libcmaes
 	double _Psucc;                                /** it could be substituted with _psigma but in our case is single dimension so we keep ours */
 	dVec _z;                                      /** sample from multivariate normal gaussian */
 	std::vector<double> _performances;            /** list of best performances*/
-    int _num_constraints;
+    //int _num_constraints;
 
     double _max_eigenv = 0.0; /**< max eigenvalue, for termination criteria. */
     double _min_eigenv = 0.0; /**< min eigenvalue, for termination criteria. */

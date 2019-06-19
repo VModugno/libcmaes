@@ -62,7 +62,7 @@ namespace libcmaes
       /**
        * \brief empty constructor.
        */
-    Parameters():_dim(0),_lambda(-1),_max_iter(0)
+    Parameters():_dim(0),_Nconstr(0),_constraints_on(false),_lambda(-1),_max_iter(0)
       {}
       
       /**
@@ -74,8 +74,8 @@ namespace libcmaes
        * @param gp genotype / phenotype object
        */
     Parameters(const int &dim, const double *x0, const int &lambda=-1,
-	       const uint64_t &seed=0, const TGenoPheno &gp=GenoPheno<NoBoundStrategy>())
-      :_dim(dim),_lambda(lambda),_seed(seed),_gp(gp)
+	       const uint64_t &seed=0, const TGenoPheno &gp=GenoPheno<NoBoundStrategy>(),bool constraints_on=false,int N_constr=0)
+      :_dim(dim),_Nconstr(N_constr),_constraints_on(constraints_on),_lambda(lambda),_seed(seed),_gp(gp)
       {
 	if (_lambda == -1 || _lambda < 2) // lambda is unspecified
 	  _lambda = 4 + floor(3.0*log(_dim));

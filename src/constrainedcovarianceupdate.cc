@@ -32,6 +32,8 @@ namespace libcmaes
   {
 	// some constraints are violated and constraints evaluation is active
 	if(solutions._violated_constrained && parameters._constraints_on){
+		 //DEBUG
+		 std::cout << "constraints violated!" << std::endl;
 		 //no update mean
 		 //no update s ( or as is defined here pc)
 		 //no update sigma
@@ -59,6 +61,9 @@ namespace libcmaes
          // Eq(7)
 		 solutions._A = solutions._A - parameters._beta/solutions._vci.size() * value;
 		 // update performance with the last best value
+		 //DEBUG
+		 std::cout << "solutions._performances = " << solutions._performances.size() << std::endl;
+		 std::cout << "solutions._performances.back() = "<<solutions._performances.back()<< std::endl;
 		 solutions._performances.push_back(solutions._performances.back());
 	}
 	else{  // all the constraints are satisfied
@@ -70,6 +75,8 @@ namespace libcmaes
 		solutions._sigma = solutions._sigma*std::exp( (1/parameters._d) * (solutions._Psucc - parameters._P_target) / (1-parameters._P_target) );
 
         if(solutions._candidates[0].get_fvalue() < solutions._performances.back()){ // performance is better
+        	//DEBUG
+            std::cout << "constraints satisfied, better perfomance! update mean" << std::endl;
 			//no update v
 			dMat w     = dVec::Zero(parameters._dim);
 			// update mean
@@ -90,6 +97,8 @@ namespace libcmaes
             solutions._A = A1 + A2;
 		 }
          else{
+        	 //DEBUG
+        	 std::cout << "constraints satisfied, perfomance is worse!" << std::endl;
              // performance is worse
 			 // no update mean
 			 // no update s ( or as is defined here pc)
@@ -98,8 +107,11 @@ namespace libcmaes
             // Eq(5)
 			 solutions._performances.push_back(solutions._performances.back());
 			 if(solutions._niter>5){
-                if(solutions._candidates[0].get_fvalue() < solutions._performances[solutions._niter-5]){ // performance is worse but better than the last fifth predecessor
-			       // update A, A{k+1} = sqrt(1 + c_cov_minus)*A{k} + ( sqrt(1 + c_cov_minus)/norm(z)^2 )*( sqrt(1 - (c_cov_minus*norm(z)^2)/(1 + c_cov_minus)) - 1 )*A{k}*(z'*z)
+                if(solutions._candidates[0].get_fvalue() < solutions._performances[solutions._niter-5]){
+                	// performance is worse but better than the last fifth predecessor
+                	//DEBUG
+                	std::cout << "constraints satisfied, performance is worse but better than the last fifth predecessor!" << std::endl;
+			        // update A, A{k+1} = sqrt(1 + c_cov_minus)*A{k} + ( sqrt(1 + c_cov_minus)/norm(z)^2 )*( sqrt(1 - (c_cov_minus*norm(z)^2)/(1 + c_cov_minus)) - 1 )*A{k}*(z'*z)
                     dMat A1 = sqrt(1 + parameters._c_cov_minus)*solutions._A;
                     dMat A2 = ( sqrt(1 + parameters._c_cov_minus)/solutions._z.squaredNorm() )
                             *( sqrt(1 - (parameters._c_cov_minus*solutions._z.squaredNorm()/(1 + parameters._c_cov_minus))) - 1 )
